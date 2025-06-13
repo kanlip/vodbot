@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: demo
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  threads:
+    virtual:
+      enabled: true
+     
