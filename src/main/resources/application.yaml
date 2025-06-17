@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    view:
+      prefix: '/templates/'
   application:
     name: demo
   cloud:

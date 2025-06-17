@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTMX Camera Selector App</title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+    <!-- Hyperscript for fancier stuff -->
+    <script type="text/javascript" th:src="@{/webjars/hyperscript.org/dist/_hyperscript.min.js}"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 700px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, button {
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        select:focus, button:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button[disabled] { /* Use CSS attribute selector for HTMX's disabled state */
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        video {
+            display: block;
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: #eee;
+            margin-top: 20px;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 1.1em;
+            color: #d9534f;
+        }
+        .mirror-toggle {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mirror-toggle input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+        .mirror-toggle label {
+            font-weight: normal;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .video-wrapper video.mirrored {
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Live Camera Feed (HTMX Enabled)</h1>
+
+    <div class="controls">
+        <label for="cameraSelector">Select Camera:</label>
+        <select id="cameraSelector" hx-on:click="cameraApp.handleCameraChange(this.value)"></select>
+        <button id="startButton" hx-on:click="cameraApp.startCameraClicked()" disabled>Start Camera</button>
+        <button id="stopButton" hx-on:click="cameraApp.stopCamera()" disabled>Stop Camera</button>
+    </div>
+
+    <div class="mirror-toggle">
+        <input type="checkbox" id="mirrorCheckbox" hx-on:change="cameraApp.toggleMirror(this.checked)">
+        <label for="mirrorCheckbox">Mirror my video (for front cameras)</label>
+    </div>
+    <div class="recording-controls">
+        <button id="recordButton" hx-on:click="cameraApp.startRecordingClicked()">Start Recording</button>
+        <button id="stopRecordButton" hx-on:click="cameraApp.stopRecordingClicked()">Stop Recording</button>
+        <button id="downloadButton" hx-on:click="cameraApp.downloadRecordingClicked()">Download Video</button>
+    </div>
+
+    <div class="video-wrapper">
+        <video id="cameraFeed" autoplay playsinline></video>
+    </div>
+<!--    <label for="barcodeInput">Scan Barcode:</label>-->
+<!--    <input type="text" id="barcodeInput" autofocus readonly placeholder="Scan a barcode here...">-->
+
+    <div id="scannedOutput">
+        <h3>Last Scanned Value:</h3>
+        <p id="lastScanValue">Waiting for scan...</p>
+    </div>
+
+    <div id="scanStatus" class="active-scan-status">Ready to scan.</div>
+
+    <p class="status-message">
+        (The input field is read-only but will still capture barcode scans. It will clear automatically.)
+    </p>
+    <div id="status"></div>
+</div>
+
+<script src="home.js"></script>
+</body>
+</html>
