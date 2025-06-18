@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.common;
 
 import java.net.URI;
 import java.nio.file.Paths;
@@ -7,6 +7,7 @@ import java.time.Duration;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
@@ -16,7 +17,7 @@ import software.amazon.awssdk.transfer.s3.model.CompletedFileUpload;
 import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 import software.amazon.awssdk.transfer.s3.model.FileUpload;
 
-@Component
+@Service
 @Slf4j
 public class S3Service {
 
