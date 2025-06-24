@@ -22,5 +22,9 @@ class ApplicationTests {
 				.writeModulesAsPlantUml()
 				.writeIndividualModulesAsPlantUml();
 	}
+	@Test
+	void shouldBeCompliant() {
+		modules.verify();
+	}
 }
 

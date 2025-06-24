@@ -1,6 +1,7 @@
-package com.example.demo.webhook.model.lazada;
+package com.example.demo.webhook;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import org.jmolecules.event.types.DomainEvent;
 
 public record LazadaReverseOrderData(
         @JsonAlias("order_status")
@@ -15,4 +16,4 @@ public record LazadaReverseOrderData(
         String tradeOrderId,
         @JsonAlias("trade_order_line_id")
         String tradeOrderLineId
-) {}
+) implements DomainEvent {}

@@ -1,17 +1,14 @@
-package com.example.demo.webhook.controller;
+package com.example.demo.webhook;
 
 
-import com.example.demo.webhook.model.lazada.LazadaReverseOrderData;
-import com.example.demo.webhook.model.lazada.LazadaTradeOrderData;
-import com.example.demo.webhook.model.lazada.LazadaWebhookData;
-import com.example.demo.webhook.service.WebhookEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -21,9 +18,10 @@ import java.util.Map;
 @Slf4j
 public class WebhookController {
 
-    private final WebhookEvent webhookEvent;
+    private final @NonNull ApplicationEventPublisher event;
 
-    @RequestMapping("/lazada")
+    @PostMapping("/lazada")
+    @ResponseStatus(HttpStatus.OK)
     public String lazadaWebhook(
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestBody LazadaWebhookData<Map<String, Object>> webhookData
@@ -37,7 +35,8 @@ public class WebhookController {
             // handle reverse order
         } else {
             LazadaTradeOrderData tradeOrder = mapper.convertValue(data, LazadaTradeOrderData.class);
-            webhookEvent.publishWebhookEvent(tradeOrder);
+            log.info("Lazada trade order received");
+            event.publishEvent(tradeOrder);
             // handle trade order
         }
         return "Lazada webhook received";

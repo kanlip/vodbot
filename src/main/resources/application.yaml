@@ -11,7 +11,11 @@ spring:
   threads:
     virtual:
       enabled: true
-
+  modulith:
+    events:
+      mongodb:
+        transaction-management:
+          enabled: false
 integration:
   tiktok:
     appKey: ${INTEGRATION_TIKTOK_APP_KEY:}

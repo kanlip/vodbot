@@ -1,4 +1,4 @@
-package com.example.demo.order.entity;
+package com.example.demo.order.internal;
 
 
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Builder
-@Document
+@Document(collection = "orders")
 @Data
 @CompoundIndex(
         name = "sellerId_orderId_idx",
