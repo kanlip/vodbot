@@ -3,7 +3,7 @@ package com.example.demo.webhook;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import org.jmolecules.event.types.DomainEvent;
 
-public record LazadaReverseOrderData(
+public record LazadaReverseOrderEvent(
         @JsonAlias("order_status")
         String orderStatus,
         @JsonAlias("reverse_order_id")

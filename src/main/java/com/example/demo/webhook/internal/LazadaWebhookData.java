@@ -1,15 +1,14 @@
-package com.example.demo.webhook;
+package com.example.demo.webhook.internal;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import org.jmolecules.event.types.DomainEvent;
 
 public record LazadaWebhookData<T>(
         @JsonAlias("seller_id")
         String sellerId,
         @JsonAlias("message_type")
-        Integer messageType,
+        LazadaMessageType messageType,
         T data,
-        Long timestamp,
+        long timestamp,
         String site
 ) {}
 

@@ -27,7 +27,8 @@ public class Order {
     String sellerId;
     String platformOrderId;
     Instant orderDate;
-    String platform;
+
+    Platform platform;
 
     String status;
 
