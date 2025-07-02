@@ -1,9 +1,10 @@
-package com.example.demo.common.configuration;
+package com.example.demo;
 
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import javax.crypto.Mac;
@@ -16,12 +17,11 @@ import java.util.HexFormat;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
+@ConfigurationProperties(value = "integration.tiktok")
 public class TiktokConfiguration {
 
-    @Value("${integration.tiktok.app-key}")
     private String appKey;
 
-    @Value("${integration.tiktok.app-secret}")
     private String appSecret;
 
     public boolean verifySignature(String signature, String payload) {

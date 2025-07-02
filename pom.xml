@@ -34,6 +34,8 @@
 		<aws.crt.version>0.30.11</aws.crt.version>
 		<spring-modulith.version>1.4.0</spring-modulith.version>
 		<jmolecules.version>1.10.0</jmolecules.version>
+		<org.mapstruct.version>1.6.3</org.mapstruct.version>
+
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -225,6 +227,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstruct.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -237,6 +244,11 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${org.mapstruct.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

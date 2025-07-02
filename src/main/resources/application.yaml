@@ -18,8 +18,8 @@ spring:
           enabled: false
 integration:
   tiktok:
-    app-key: ${INTEGRATION_TIKTOK_APP_KEY:}
-    app-secret: ${INTEGRATION_TIKTOK_APP_SECRET:}
-    access-token: ${INTEGRATION_TIKTOK_ACCESS_TOKEN:}
-    open-api-url: ${INTEGRATION_TIKTOK_OPEN_API_URL:https://open-api.tikTokglobalshop.com}
-    shop-cipher: ${INTEGRATION_TIKTOK_SHOP_CIPHER:}
+    appKey: ${INTEGRATION_TIKTOK_APP_KEY:}
+    appSecret: ${INTEGRATION_TIKTOK_APP_SECRET:}
+    accessToken: ${INTEGRATION_TIKTOK_ACCESS_TOKEN:}
+    openApiUrl: ${INTEGRATION_TIKTOK_OPEN_API_URL:https://open-api.tikTokglobalshop.com}
+    shopCipher: ${INTEGRATION_TIKTOK_SHOP_CIPHER:}

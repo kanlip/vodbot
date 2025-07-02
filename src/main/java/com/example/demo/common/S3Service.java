@@ -22,7 +22,7 @@ import software.amazon.awssdk.transfer.s3.model.FileUpload;
 
 @Service
 @Slf4j
-public class S3Service {
+public class S3Service implements IS3Service{
 
     private final S3Client s3Client;
 
