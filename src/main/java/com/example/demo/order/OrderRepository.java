@@ -10,7 +10,6 @@ import java.util.Optional;
 
 
 @Repository
-public interface OrderRepository extends MongoRepository<Order, ObjectId> {
+public interface OrderRepository extends IOrderRepository, MongoRepository<Order, ObjectId> {
     Optional<Order> findByPlatformOrderIdAndPlatform(String id, Platform platform);
-
 }

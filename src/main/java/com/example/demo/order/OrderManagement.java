@@ -18,7 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderManagement {
 
-    private final OrderRepository orderRepository; // Assuming you have an OrderRepository to handle database operations
+    private final IOrderRepository orderRepository; // Assuming you have an OrderRepository to handle database operations
     @Async
     @EventListener
     void onLazadaOrderEvent(LazadaTradeOrderEvent data) {
