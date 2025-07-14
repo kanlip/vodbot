@@ -1,4 +1,4 @@
-package com.example.demo.order.internal;
+package com.example.demo.order.entity;
 
 
 import lombok.Builder;
@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Data
 @Document
-public class Package {
+public class PackageEntity {
 
     @Id
     ObjectId id;

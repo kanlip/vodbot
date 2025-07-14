@@ -9,5 +9,15 @@ services:
       - 27017:27017
     volumes:
       - mongo-data:/data/db
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566" # LocalStack endpoint
+    environment:
+      - SERVICES=s3 # Specify the AWS services you need
+      - DEFAULT_REGION=ap-southeast-7 # Set a default region
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "./init-scripts:/etc/localstack/init/ready.d"
 volumes:
   mongo-data:

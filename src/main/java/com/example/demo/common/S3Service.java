@@ -1,64 +1,47 @@
 package com.example.demo.common;
 
-import java.io.File;
-import java.net.URI;
-import java.nio.file.Paths;
-import java.time.Duration;
-
-import org.springframework.stereotype.Component;
-
+import com.example.demo.AwsConfiguration;
+import com.example.demo.order.internal.Platform;
+import io.awspring.cloud.s3.S3Template;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
-import software.amazon.awssdk.transfer.s3.S3TransferManager;
-import software.amazon.awssdk.transfer.s3.model.CompletedFileUpload;
-import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
-import software.amazon.awssdk.transfer.s3.model.FileUpload;
+
+import java.io.InputStream;
+import java.time.Duration;
 
 @Service
 @Slf4j
-public class S3Service implements IS3Service{
+@RequiredArgsConstructor
+public class S3Service implements IS3Service {
 
-    private final S3Client s3Client;
+    private final S3Template s3Template;
+    private final AwsConfiguration awsConfiguration;
 
-    public S3Service(S3Client s3Client) {
-        this.s3Client = s3Client;
+    public void uploadFile(String key, InputStream inputStream) {
+        String bucketName = awsConfiguration.bucket();
+        s3Template.upload(bucketName, key, inputStream);
     }
 
-    public void uploadFile(String bucketName,
-            String key, URI filePathURI) {
+    public String getPresignedUri(String fileName) {
+        String bucketName = awsConfiguration.bucket();
+        String userId = "user-id"; // Replace with actual user ID if needed
+        String sellerId = "seller-id"; // Replace with actual seller ID if needed
+        Platform platform = Platform.LAZADA;
+        String orderId = "order-id"; // Replace with actual order ID if needed
+        String packageId = "package-id"; // Replace with actual package ID if needed
+        String currentDate = java.time.LocalDate.now().toString();
+        String extension = "mp4"; // Replace with actual file extension if needed
+        String keyName = String.format("%s/%s/%s/%s_%s_%s.%s", userId,
+                currentDate,
+                platform.name().toLowerCase(),
+                sellerId,
+                orderId,
+                packageId,
+                extension);
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .build();
-
-        s3Client.putObject(putObjectRequest, Paths.get(filePathURI));
-    }
-
-    public String getPresignedUri(String bucketName, String keyName) {
-       try (S3Presigner presigner = S3Presigner.create()) {
-
-            GetObjectRequest objectRequest = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(keyName)
-                    .build();
-
-            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofDays(10))  // The URL will expire in 10 minutes.
-                    .getObjectRequest(objectRequest)
-                    .build();
-
-            PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
-            log.info("Presigned URL: [{}]", presignedRequest.url().toString());
-            log.info("HTTP method: [{}]", presignedRequest.httpRequest().method());
-
-            return presignedRequest.url().toExternalForm();
-        } 
+        String url = s3Template.createSignedPutURL(bucketName, keyName, Duration.ofMinutes(10)).toExternalForm();
+        log.info("Presigned URL: [{}]", url);
+        return url;
     }
 }

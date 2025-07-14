@@ -1,3 +1,8 @@
+logging:
+  level:
+    io:
+      awspring:
+        cloud: debug
 spring:
   mvc:
     view:
@@ -8,6 +13,15 @@ spring:
     config:
       import-check:
         enabled: false
+    aws:
+      s3:
+        bucket: ${SPRING_CLOUD_AWS_S3_BUCKET:demo-bucket}
+        enabled: true
+        region: ${SPRING_CLOUD_AWS_S3_REGION:ap-southeast-7}
+      credentials:
+        access-key: test
+        secret-key: test
+      endpoint: ${SPRING_CLOUD_AWS_ENDPOINT:http://localhost:4566}
   threads:
     virtual:
       enabled: true

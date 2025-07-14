@@ -1,9 +1,8 @@
 package com.example.demo.common;
 
-import java.net.URI;
+import java.io.InputStream;
 
 public interface IS3Service {
-    public void uploadFile(String bucketName,
-                           String key, URI filePathURI);
-    public String getPresignedUri(String bucketName, String keyName);
+    public void uploadFile(String key, InputStream inputStream);
+    public String getPresignedUri(String keyName);
 }

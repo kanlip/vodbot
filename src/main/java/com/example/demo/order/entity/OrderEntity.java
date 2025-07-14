@@ -1,6 +1,7 @@
-package com.example.demo.order.internal;
+package com.example.demo.order.entity;
 
 
+import com.example.demo.order.internal.Platform;
 import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -19,7 +20,7 @@ import java.util.List;
         name = "sellerId_orderId_idx",
         def = "{'sellerId': 1, 'orderId': 1}",
         unique = true)
-public class Order {
+public class OrderEntity {
 
     @Id
     ObjectId id;
@@ -36,6 +37,6 @@ public class Order {
     Instant updatedAt;
 
     @DocumentReference
-    List<Package> packageList;
+    List<PackageEntity> packageEntityList;
 
 }

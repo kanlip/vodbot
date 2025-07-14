@@ -1,11 +1,10 @@
 package com.example.demo.common.controller;
 
+import com.example.demo.common.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.common.S3Service;
 
 @RestController
 @RequestMapping("/api/videos")
@@ -16,11 +15,8 @@ public class VideoController {
     
     @PostMapping("/presigned-uri")
     public String getPresignedUri() {
-        
-        return s3Service.getPresignedUri(
-            "your-bucket-name", // Replace with your actual bucket name
-            "your-video-key"    // Replace with the actual key for the video file
-        );
+
+        return s3Service.getPresignedUri("test-key.txt");
     }
 
 }

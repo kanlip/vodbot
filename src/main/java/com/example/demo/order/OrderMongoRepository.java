@@ -1,6 +1,6 @@
 package com.example.demo.order;
 
-import com.example.demo.order.internal.Order;
+import com.example.demo.order.entity.OrderEntity;
 import com.example.demo.order.internal.Platform;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -10,6 +10,6 @@ import java.util.Optional;
 
 
 @Repository
-public interface OrderRepository extends IOrderRepository, MongoRepository<Order, ObjectId> {
-    Optional<Order> findByPlatformOrderIdAndPlatform(String id, Platform platform);
+public interface OrderMongoRepository extends IOrderRepository, MongoRepository<OrderEntity, ObjectId> {
+    Optional<OrderEntity> findByPlatformOrderIdAndPlatform(String id, Platform platform);
 }

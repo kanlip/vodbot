@@ -1,6 +1,5 @@
 package com.example.demo.webhook.internal;
 
-import com.example.demo.webhook.LazadaTradeOrderEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

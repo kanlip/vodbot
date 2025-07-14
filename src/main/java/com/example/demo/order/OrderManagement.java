@@ -1,6 +1,6 @@
 package com.example.demo.order;
 
-import com.example.demo.order.internal.Order;
+import com.example.demo.order.entity.OrderEntity;
 import com.example.demo.order.internal.Platform;
 import com.example.demo.webhook.LazadaTradeOrderEvent;
 import com.example.demo.webhook.ShopeeOrderEvent;
@@ -24,23 +24,23 @@ public class OrderManagement {
     void onLazadaOrderEvent(LazadaTradeOrderEvent data) {
         // Process the LazadaTradeOrderData
         log.info("Received Lazada Trade Order Data: {}", data);
-        Optional<Order> order = orderRepository
+        Optional<OrderEntity> order = orderRepository
                 .findByPlatformOrderIdAndPlatform(data.tradeOrderId(), Platform.LAZADA);
         if(order.isPresent()) {
-            Order existingOrder = order.get();
-            existingOrder.setStatus(data.orderStatus());
-            existingOrder.setUpdatedAt(Instant.ofEpochMilli(data.statusUpdateTime()));
-            existingOrder.setPlatformOrderId(data.tradeOrderId());
-            existingOrder.setPlatform(Platform.LAZADA);
-            orderRepository.save(existingOrder);
+            OrderEntity existingOrderEntity = order.get();
+            existingOrderEntity.setStatus(data.orderStatus());
+            existingOrderEntity.setUpdatedAt(Instant.ofEpochMilli(data.statusUpdateTime()));
+            existingOrderEntity.setPlatformOrderId(data.tradeOrderId());
+            existingOrderEntity.setPlatform(Platform.LAZADA);
+            orderRepository.save(existingOrderEntity);
         } else{
-            Order newOrder = Order.builder()
+            OrderEntity newOrderEntity = OrderEntity.builder()
                     .status(data.orderStatus())
                     .updatedAt(Instant.ofEpochMilli(data.statusUpdateTime()))
                     .platformOrderId(data.tradeOrderId())
                     .platform(Platform.LAZADA)
                     .build();
-            orderRepository.save(newOrder);
+            orderRepository.save(newOrderEntity);
         }
 
     }
@@ -50,23 +50,23 @@ public class OrderManagement {
     void onShopeeOrderEvent(ShopeeOrderEvent data) {
         // Process the ShopeeOrderData
         log.info("Received Shopee Order Data: {}", data);
-        Optional<Order> order = orderRepository
+        Optional<OrderEntity> order = orderRepository
                 .findByPlatformOrderIdAndPlatform(data.orderId(), Platform.SHOPEE);
         if(order.isPresent()) {
-            Order existingOrder = order.get();
-            existingOrder.setStatus(data.orderStatus());
-            existingOrder.setUpdatedAt(Instant.ofEpochMilli(data.updateTime()));
-            existingOrder.setPlatformOrderId(data.orderId());
-            existingOrder.setPlatform(Platform.SHOPEE);
-            orderRepository.save(existingOrder);
+            OrderEntity existingOrderEntity = order.get();
+            existingOrderEntity.setStatus(data.orderStatus());
+            existingOrderEntity.setUpdatedAt(Instant.ofEpochMilli(data.updateTime()));
+            existingOrderEntity.setPlatformOrderId(data.orderId());
+            existingOrderEntity.setPlatform(Platform.SHOPEE);
+            orderRepository.save(existingOrderEntity);
         } else {
-            Order newOrder = Order.builder()
+            OrderEntity newOrderEntity = OrderEntity.builder()
                     .status(data.orderStatus())
                     .updatedAt(Instant.ofEpochMilli(data.updateTime()))
                     .platformOrderId(data.orderId())
                     .platform(Platform.SHOPEE)
                     .build();
-            orderRepository.save(newOrder);
+            orderRepository.save(newOrderEntity);
         }
     }
 }
