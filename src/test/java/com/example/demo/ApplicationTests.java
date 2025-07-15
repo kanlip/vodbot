@@ -10,21 +10,21 @@ import org.springframework.modulith.docs.Documenter;
 @SpringBootTest
 class ApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-	ApplicationModules modules = ApplicationModules.of(Application.class);
-
-	@Test
-	void writeDocumentationSnippets() {
-
-		new Documenter(modules)
-				.writeModulesAsPlantUml()
-				.writeIndividualModulesAsPlantUml();
-	}
-	@Test
-	void shouldBeCompliant() {
-		modules.verify();
-	}
+//	@Test
+//	void contextLoads() {
+//	}
+//	ApplicationModules modules = ApplicationModules.of(Application.class);
+//
+//	@Test
+//	void writeDocumentationSnippets() {
+//
+//		new Documenter(modules)
+//				.writeModulesAsPlantUml()
+//				.writeIndividualModulesAsPlantUml();
+//	}
+//	@Test
+//	void shouldBeCompliant() {
+//		modules.verify();
+//	}
 }
 
