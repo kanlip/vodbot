@@ -1,7 +1,6 @@
 package com.example.demo.product.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -9,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
-public class SyncProductRequest extends CommonParameter{
+public class ShopeeSyncProductRequest extends ShopeeCommonParameter {
 
     private int offset;
     @JsonProperty("page_size")

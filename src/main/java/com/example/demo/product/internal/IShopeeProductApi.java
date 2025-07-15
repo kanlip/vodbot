@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface IShopeeProductApi {
 
     @GetMapping("/get_item_list")
-    ShopeeProductResponse getItemList(@SpringQueryMap SyncProductRequest syncProductRequest);
+    ShopeeProductResponse getItemList(@SpringQueryMap ShopeeSyncProductRequest shopeeSyncProductRequest);
 }

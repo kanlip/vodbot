@@ -1,7 +1,9 @@
 package com.example.demo.product.mapper;
 
-import com.example.demo.product.internal.CommonParameter;
-import com.example.demo.product.internal.SyncProductRequest;
+import com.example.demo.product.internal.LazadaCommonParameter;
+import com.example.demo.product.internal.LazadaSyncProductRequest;
+import com.example.demo.product.internal.ShopeeCommonParameter;
+import com.example.demo.product.internal.ShopeeSyncProductRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -11,6 +13,7 @@ public interface CommonParameterMapper {
     CommonParameterMapper INSTANCE = Mappers.getMapper(CommonParameterMapper.class);
 
 
-    SyncProductRequest toSyncProductRequest(CommonParameter commonParameter);
+    ShopeeSyncProductRequest toShopeeSyncProductRequest(ShopeeCommonParameter shopeeCommonParameter);
 
+    LazadaSyncProductRequest toLazadaSyncProductRequest(LazadaCommonParameter lazadaCommonParameter);
 }

@@ -13,7 +13,11 @@ import java.time.Instant;
 
 @Data
 @Builder
+
 @Document(collection = "barcode_mappings")
+/**
+ * Represents a mapping between a product and its barcode.
+ */
 public class BarcodeEntity {
     @Id
     private ObjectId id;

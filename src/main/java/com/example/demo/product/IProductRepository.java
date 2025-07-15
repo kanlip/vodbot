@@ -8,7 +8,7 @@ import java.util.List;
 public interface IProductRepository {
 
      List<BarcodeEntity> findAll();
-     BarcodeEntity save(BarcodeEntity product);
-     BarcodeEntity saveAll(List<BarcodeEntity> products);
+     BarcodeEntity insert(BarcodeEntity product);
+     List<BarcodeEntity> insert(List<BarcodeEntity> products);
      void deleteById(ObjectId id);
 }
