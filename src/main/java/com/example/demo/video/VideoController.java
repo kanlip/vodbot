@@ -1,5 +1,9 @@
 package com.example.demo.video;
 
+import com.example.demo.video.entity.VideoEntity;
+import com.example.demo.video.repository.VideoRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +19,10 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/video")
+@RequiredArgsConstructor
 public class VideoController {
+    private final VideoRepository videoRepository;
+
     // Dummy video DTO for demonstration
     public static class VideoDto {
         public String id;
@@ -27,35 +34,41 @@ public class VideoController {
             this.title = title;
             this.url = url;
         }
+
+        public VideoDto(VideoEntity entity) {
+            this.id = entity.getId();
+            this.title = entity.getPackerName(); // Example: use packerName as title
+            this.url = entity.getVideoUrl();
+        }
     }
 
     @GetMapping
     public Page<VideoDto> getVideos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,asc") String[] sort
+            @RequestParam(defaultValue = "id,asc", name = "sort") String sort
     ) {
-        // Example: sort=["title,desc"]
-        Sort sortObj = Sort.by(
-                Stream.of(sort).map(s -> {
-                    String[] parts = s.split(",");
-                    return new Sort.Order(
-                            parts.length > 1 && parts[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
-                            parts[0]
-                    );
-                }).toList()
-        );
-        Pageable pageable = PageRequest.of(page, size, sortObj);
-        // Dummy data for demonstration
-        List<VideoDto> allVideos = List.of(
-                new VideoDto("1", "Video A", "url1"),
-                new VideoDto("2", "Video B", "url2"),
-                new VideoDto("3", "Video C", "url3")
-        );
-        // In real code, fetch from DB with pageable
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), allVideos.size());
-        List<VideoDto> paged = allVideos.subList(Math.min(start, allVideos.size()), end);
-        return new PageImpl<>(paged, pageable, allVideos.size());
+        // Accepts: sort=title,asc&sort=id,desc or sort=title,asc,id,desc
+        String[] sortParams = sort.contains("&") ? sort.split("&") : sort.split(",");
+        List<Sort.Order> orders = new java.util.ArrayList<>();
+        for (int i = 0; i < sortParams.length; i++) {
+            String[] parts = sortParams[i].split(",");
+            if (parts.length == 2) {
+                orders.add(new Sort.Order(
+                        parts[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        parts[0]
+                ));
+            } else if (parts.length == 1 && i + 1 < sortParams.length) {
+                // Support: sort=title,asc,id,desc
+                orders.add(new Sort.Order(
+                        sortParams[i + 1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        parts[0]
+                ));
+                i++;
+            }
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+        Page<VideoEntity> videoPage = videoRepository.findAll(pageable);
+        return videoPage.map(VideoDto::new);
     }
 }
