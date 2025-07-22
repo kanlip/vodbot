@@ -20,8 +20,6 @@ public class ShopeeProductResponse {
         private Item[] item;
         private Tag tag;
 
-
-
     }
 
     @Setter

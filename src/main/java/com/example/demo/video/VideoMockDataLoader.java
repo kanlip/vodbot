@@ -5,30 +5,28 @@ import com.example.demo.user.entity.CompanyEntity;
 import com.example.demo.video.entity.VideoEntity;
 import com.example.demo.video.entity.VideoEntity.ItemScan;
 import com.example.demo.video.repository.VideoRepository;
+import java.time.Instant;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class VideoMockDataLoader implements CommandLineRunner {
+
     private final VideoRepository videoRepository;
 
     @Override
     public void run(String... args) {
         // Mock CompanyEntity and BarcodeEntity references (replace with real fetch in real code)
 
-
         ItemScan scan1 = new ItemScan();
         scan1.setTimestampOffsetSeconds(15);
         scan1.setSku("ITEM001");
         scan1.setQuantity(1);
         scan1.setStatus("scanned");
-
 
         ItemScan scan2 = new ItemScan();
         scan2.setTimestampOffsetSeconds(60);
@@ -41,9 +39,13 @@ public class VideoMockDataLoader implements CommandLineRunner {
         video.setPlatformOrderId("LAZADA-ORD-987654321");
         video.setRecordedByUserId(new ObjectId("665f80b1a2b3c4d5e6f7a8ba"));
         video.setPackerName("Kan Pakker");
-        video.setS3Key("videos/665f80b1a2b3c4d5e6f7a8b9/LAZADA-ORD-987654321_20250605143500.mp4");
+        video.setS3Key(
+            "videos/665f80b1a2b3c4d5e6f7a8b9/LAZADA-ORD-987654321_20250605143500.mp4"
+        );
         video.setS3Bucket("your-saas-packing-videos");
-        video.setVideoUrl("https://your-saas-packing-videos.s3.ap-southeast-1.amazonaws.com/videos/...");
+        video.setVideoUrl(
+            "https://your-saas-packing-videos.s3.ap-southeast-1.amazonaws.com/videos/..."
+        );
         video.setRecordedAt(Instant.parse("2025-06-05T14:35:00Z"));
         video.setDurationSeconds(300);
         video.setFileSizeMB(50.5);
@@ -58,4 +60,3 @@ public class VideoMockDataLoader implements CommandLineRunner {
         videoRepository.save(video);
     }
 }
-

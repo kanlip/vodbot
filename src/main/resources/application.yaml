@@ -37,13 +37,7 @@ springdoc:
     path: /swagger-ui.html
     enable: true
   show-actuator: true
-integration:
-  tiktok:
-    appKey: ${INTEGRATION_TIKTOK_APP_KEY:}
-    appSecret: ${INTEGRATION_TIKTOK_APP_SECRET:}
-    accessToken: ${INTEGRATION_TIKTOK_ACCESS_TOKEN:}
-    openApiUrl: ${INTEGRATION_TIKTOK_OPEN_API_URL:https://open-api.tikTokglobalshop.com}
-    shopCipher: ${INTEGRATION_TIKTOK_SHOP_CIPHER:}
+
 lazada:
   product:
     url : ${LAZADA_PRODUCT_URL:https://api.lazada.co.th/rest}
@@ -52,6 +46,14 @@ shopee:
       url: ${SHOPEE_PRODUCT_URL:https://partner.shopeemobile.com/api/v2/product}
   accessToken: ${SHOPEE_ACCESS_TOKEN:}
   partnerId: ${SHOPEE_PARTNER_ID:}
+tiktok:
+  product:
+    url: ${TIKTOK_PRODUCT_URL:https://open-api.tiktok.com/product/v1}
+  accessToken: ${TIKTOK_ACCESS_TOKEN:}
+  appKey: ${TIKTOK_APP_KEY:}
+  appSecret: ${TIKTOK_APP_SECRET:}
+  shopCipher: ${TIKTOK_SHOP_CIPHER:}
+  openApiUrl: ${TIKTOK_OPEN_API_URL:https://open-api.tiktokglobalshop.com}
 feign:
   compression:
     request:

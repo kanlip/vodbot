@@ -1,22 +1,23 @@
 package com.example.demo.common.controller;
 
-import com.example.demo.common.S3Service;
+import com.example.demo.common.IS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/s3")
+@RequestMapping("/api/upload")
 @RequiredArgsConstructor
 public class S3Controller {
 
-    private final S3Service s3Service;
-    
-    @PostMapping("/presigned-uri")
-    public String getPresignedUri() {
+    private final IS3Service s3Service;
 
-        return s3Service.getPresignedUri("test-key.txt");
+    @PostMapping("/presigned-uri")
+    public String getPresignedUri(@RequestBody String fileName) {
+
+        return s3Service.getPresignedUri(fileName);
     }
 
 }

@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 public class VideoController {
     private final VideoRepository videoRepository;
 
-    // Dummy video DTO for demonstration
     public static class VideoDto {
         public String id;
         public String title;
