@@ -27,7 +27,6 @@ public class VideoMockDataLoader implements CommandLineRunner {
         scan1.setSku("ITEM001");
         scan1.setQuantity(1);
         scan1.setStatus("scanned");
-
         ItemScan scan2 = new ItemScan();
         scan2.setTimestampOffsetSeconds(60);
         scan2.setSku("ITEM002");
@@ -46,6 +45,7 @@ public class VideoMockDataLoader implements CommandLineRunner {
         video.setVideoUrl(
             "https://your-saas-packing-videos.s3.ap-southeast-1.amazonaws.com/videos/..."
         );
+        video.setCompanyId(new ObjectId());
         video.setRecordedAt(Instant.parse("2025-06-05T14:35:00Z"));
         video.setDurationSeconds(300);
         video.setFileSizeMB(50.5);
