@@ -1,7 +1,7 @@
 package com.example.demo.common;
 
 import com.example.demo.AwsConfiguration;
-import com.example.demo.order.internal.Platform;
+
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

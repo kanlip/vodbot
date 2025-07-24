@@ -1,6 +1,6 @@
 package com.example.demo.product.mapper;
 
-import com.example.demo.order.internal.Platform;
+import com.example.demo.common.Platform;
 import com.example.demo.product.entity.BarcodeEntity;
 import com.example.demo.product.internal.TikTokProductResponse;
 import org.mapstruct.Mapper;

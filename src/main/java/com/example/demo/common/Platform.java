@@ -1,4 +1,4 @@
-package com.example.demo.order.internal;
+package com.example.demo.common;
 
 public enum Platform {
 

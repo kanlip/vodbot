@@ -1,7 +1,6 @@
 package com.example.demo.product;
 
-import com.example.demo.order.internal.Platform;
-import com.example.demo.product.internal.ShopeeCommonParameter;
+import com.example.demo.common.Platform;
 
 public interface IProductSync {
 

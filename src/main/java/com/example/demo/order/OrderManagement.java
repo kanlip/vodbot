@@ -1,7 +1,7 @@
 package com.example.demo.order;
 
+import com.example.demo.common.Platform;
 import com.example.demo.order.entity.OrderEntity;
-import com.example.demo.order.internal.Platform;
 import com.example.demo.webhook.LazadaTradeOrderEvent;
 import com.example.demo.webhook.ShopeeOrderEvent;
 import lombok.RequiredArgsConstructor;

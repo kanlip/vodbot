@@ -1,7 +1,6 @@
 package com.example.demo.order.entity;
 
 
-import com.example.demo.order.internal.Platform;
 import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -9,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
+import com.example.demo.common.Platform;
 
 import java.time.Instant;
 import java.util.List;
@@ -36,7 +37,6 @@ public class OrderEntity {
     Instant createdAt;
     Instant updatedAt;
 
-    @DocumentReference
-    List<PackageEntity> packageEntityList;
+    List<ObjectId> packageEntityList;
 
 }

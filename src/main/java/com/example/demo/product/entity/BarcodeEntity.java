@@ -1,6 +1,6 @@
 package com.example.demo.product.entity;
 
-import com.example.demo.order.internal.Platform;
+import com.example.demo.common.Platform;
 import com.example.demo.user.entity.CompanyEntity;
 import lombok.Builder;
 import lombok.Data;
@@ -22,8 +22,7 @@ public class BarcodeEntity {
     @Id
     private ObjectId id;
 
-    @DocumentReference
-    private CompanyEntity company;
+    private ObjectId company;
 
     private String barcodeValue;
     private String type; // system_generated, user_defined, platform_sync

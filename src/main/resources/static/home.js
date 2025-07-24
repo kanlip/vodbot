@@ -51,7 +51,6 @@ window.cameraApp = (() => {
             if (indicatorSpan) indicatorSpan.remove();
         }
     }
-
     /**
      * Populates the camera selector dropdown with available video input devices.
      */

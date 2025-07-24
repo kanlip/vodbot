@@ -1,7 +1,8 @@
 package com.example.demo.order;
 
+import com.example.demo.common.Platform;
 import com.example.demo.order.entity.OrderEntity;
-import com.example.demo.order.internal.Platform;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
 package com.example.demo.product;
 
-import com.example.demo.order.internal.Platform;
+import com.example.demo.common.Platform;
 import com.example.demo.product.internal.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

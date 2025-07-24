@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import java.time.Instant;
 import java.util.List;
 
-import com.example.demo.user.entity.CompanyEntity;
 import com.example.demo.product.entity.BarcodeEntity;
 
 @Document(collection = "videos")
@@ -22,8 +21,8 @@ public class VideoEntity {
     @Id
     private String id;
 
-    @DocumentReference
-    private CompanyEntity company;
+    
+    private ObjectId company;
     private ObjectId companyId;
     private ObjectId orderId;
     private String platformOrderId;
@@ -49,9 +48,7 @@ public class VideoEntity {
         private String sku;
         private Integer quantity;
         private String status;
-        @DocumentReference
-        private BarcodeEntity barcodeEntity; // Reference to BarcodeEntity
-        private String barcodeEntityId; // Optionally keep the id for denormalized access
+        private ObjectId barcodeEntityId; // Optionally keep the id for denormalized access
         // Optionally, you can add more fields from BarcodeEntity if you want to denormalize further
     }
     // getters and setters
