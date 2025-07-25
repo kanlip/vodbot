@@ -321,6 +321,78 @@ function processBarcodeClientSide(scannedValue) {
     console.log('Barcode Scanned:', scannedValue);
     lastScanValueElement.textContent = scannedValue;
     lastScanValueElement.style.color = '#333';
+    
+    // Call backend to get presigned URL for the scanned barcode
+    callBackendForPresignedUrl(scannedValue);
+}
+
+function callBackendForPresignedUrl(barcodeValue) {
+    console.log('Requesting presigned URL for barcode:', barcodeValue);
+    
+    // Update status to show we're processing
+    setScanStatus('Processing barcode...', 'waiting');
+    
+    fetch('/api/barcode/scan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            barcodeValue: barcodeValue
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Backend response:', data);
+        
+        if (data.success) {
+            setScanStatus(`Presigned URL generated: ${data.presignedUrl}`, 'ready');
+            
+            // You could display the presigned URL or use it for uploads
+            displayPresignedUrl(data.presignedUrl, data.barcodeValue);
+        } else {
+            setScanStatus(`Error: ${data.message}`, 'waiting');
+            console.error('Backend error:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error calling backend:', error);
+        setScanStatus('Error connecting to backend', 'waiting');
+    });
+}
+
+function displayPresignedUrl(presignedUrl, barcodeValue) {
+    // Add a new element to display the presigned URL
+    let urlDisplayElement = document.getElementById('presignedUrlDisplay');
+    if (!urlDisplayElement) {
+        urlDisplayElement = document.createElement('div');
+        urlDisplayElement.id = 'presignedUrlDisplay';
+        urlDisplayElement.style.marginTop = '20px';
+        urlDisplayElement.style.padding = '10px';
+        urlDisplayElement.style.backgroundColor = '#e7f3ff';
+        urlDisplayElement.style.border = '1px solid #007bff';
+        urlDisplayElement.style.borderRadius = '5px';
+        document.getElementById('scannedOutput').appendChild(urlDisplayElement);
+    }
+    
+    urlDisplayElement.innerHTML = `
+        <h4>Presigned URL for Barcode: ${barcodeValue}</h4>
+        <p style="word-break: break-all; font-family: monospace; font-size: 12px;">
+            ${presignedUrl}
+        </p>
+        <button onclick="copyToClipboard('${presignedUrl}')" style="margin-top: 10px;">
+            Copy URL to Clipboard
+        </button>
+    `;
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Presigned URL copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        alert('Failed to copy URL to clipboard');
+    });
 }
 
 function setScanStatus(message, type) {
