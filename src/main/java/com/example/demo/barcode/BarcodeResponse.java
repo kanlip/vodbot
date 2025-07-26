@@ -10,4 +10,12 @@ public class BarcodeResponse {
     private String message;
     private String presignedUrl;
     private String barcodeValue;
+    private ResponseType responseType;
+    private boolean shouldStartRecording;
+    
+    public enum ResponseType {
+        PACKAGE_STARTED,      // First scan processed - recording should start
+        ITEM_VERIFIED,        // Item verification completed
+        ERROR                 // Error occurred
+    }
 }

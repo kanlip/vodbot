@@ -305,7 +305,7 @@ window.cameraApp = (() => {
     };
 })();
 
-// --- Barcode Scanner Logic (separate from cameraApp - no changes here) ---
+// --- Barcode Scanner Logic (separate from cameraApp - enhanced for package workflow) ---
 const lastScanValueElement = document.getElementById('lastScanValue');
 const scanStatusElement = document.getElementById('scanStatus');
 
@@ -317,39 +317,44 @@ let canAcceptNextScan = true;
 const SCAN_DELAY_MS = 500;
 let scanDelayTimer;
 
+// Package state tracking
+let currentPackageId = null;
+let isPackageActive = false;
+
 function processBarcodeClientSide(scannedValue) {
     console.log('Barcode Scanned:', scannedValue);
     lastScanValueElement.textContent = scannedValue;
     lastScanValueElement.style.color = '#333';
     
-    // Call backend to get presigned URL for the scanned barcode
-    callBackendForPresignedUrl(scannedValue);
+    // Call backend to process the scan
+    callBackendForBarcodeProcessing(scannedValue);
 }
 
-function callBackendForPresignedUrl(barcodeValue) {
-    console.log('Requesting presigned URL for barcode:', barcodeValue);
+function callBackendForBarcodeProcessing(barcodeValue) {
+    console.log('Processing barcode:', barcodeValue);
     
     // Update status to show we're processing
     setScanStatus('Processing barcode...', 'waiting');
+    
+    // Prepare request - backend will auto-determine scan type
+    const requestData = {
+        barcodeValue: barcodeValue
+        // scanType will be auto-determined by backend based on active package state
+    };
     
     fetch('/api/barcode/scan', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            barcodeValue: barcodeValue
-        })
+        body: JSON.stringify(requestData)
     })
     .then(response => response.json())
     .then(data => {
         console.log('Backend response:', data);
         
         if (data.success) {
-            setScanStatus(`Presigned URL generated: ${data.presignedUrl}`, 'ready');
-            
-            // You could display the presigned URL or use it for uploads
-            displayPresignedUrl(data.presignedUrl, data.barcodeValue);
+            handleSuccessfulScan(data);
         } else {
             setScanStatus(`Error: ${data.message}`, 'waiting');
             console.error('Backend error:', data.message);
@@ -361,7 +366,124 @@ function callBackendForPresignedUrl(barcodeValue) {
     });
 }
 
-function displayPresignedUrl(presignedUrl, barcodeValue) {
+function handleSuccessfulScan(data) {
+    if (data.responseType === 'PACKAGE_STARTED') {
+        handlePackageStarted(data);
+    } else if (data.responseType === 'ITEM_VERIFIED') {
+        handleItemVerified(data);
+    } else {
+        console.error('Unknown response type:', data.responseType);
+        setScanStatus('Unknown response from server', 'waiting');
+    }
+}
+
+function handlePackageStarted(data) {
+    console.log('Package started:', data.barcodeValue);
+    
+    // Update package state
+    currentPackageId = data.barcodeValue;
+    isPackageActive = true;
+    
+    // Update UI
+    setScanStatus(`Package ${data.barcodeValue} started. Recording will begin automatically. Scan items to verify.`, 'ready');
+    
+    // Display the presigned URL
+    displayPresignedUrl(data.presignedUrl, data.barcodeValue, 'Package Recording');
+    
+    // Auto-start recording if camera is active and should start recording
+    if (data.shouldStartRecording && window.cameraApp) {
+        setTimeout(() => {
+            console.log('Auto-starting recording for package...');
+            window.cameraApp.startRecordingClicked();
+        }, 1000); // Small delay to ensure UI updates are visible
+    }
+}
+
+function handleItemVerified(data) {
+    console.log('Item verified:', data.barcodeValue);
+    
+    // Update UI to show item verification
+    setScanStatus(`Item ${data.barcodeValue} verified for package ${currentPackageId}`, 'ready');
+    
+    // Update the scan output area to show verification
+    updateItemVerificationDisplay(data.barcodeValue, currentPackageId);
+}
+
+function updateItemVerificationDisplay(itemBarcode, packageId) {
+    // Add or update item verification display
+    let verificationElement = document.getElementById('itemVerificationDisplay');
+    if (!verificationElement) {
+        verificationElement = document.createElement('div');
+        verificationElement.id = 'itemVerificationDisplay';
+        verificationElement.style.marginTop = '20px';
+        verificationElement.style.padding = '10px';
+        verificationElement.style.backgroundColor = '#e8f5e8';
+        verificationElement.style.border = '1px solid #28a745';
+        verificationElement.style.borderRadius = '5px';
+        document.getElementById('scannedOutput').appendChild(verificationElement);
+    }
+    
+    const currentTime = new Date().toLocaleTimeString();
+    const existingContent = verificationElement.innerHTML;
+    
+    verificationElement.innerHTML = `
+        <h4>Item Verification for Package: ${packageId}</h4>
+        <div style="margin-bottom: 10px;">
+            <strong>Latest Item:</strong> ${itemBarcode} <span style="color: #28a745; font-weight: bold;">✓ VERIFIED</span> 
+            <span style="font-size: 12px; color: #666;">[${currentTime}]</span>
+        </div>
+        ${existingContent.includes('<div style="font-size: 12px;">') ? existingContent.split('<div style="font-size: 12px;">')[1] : ''}
+        <div style="margin-top: 10px;">
+            <button onclick="endPackageSession()" style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                End Package Session
+            </button>
+        </div>
+    `;
+}
+
+function endPackageSession() {
+    if (!currentPackageId) {
+        alert('No active package session to end.');
+        return;
+    }
+    
+    console.log('Ending package session:', currentPackageId);
+    
+    fetch(`/api/barcode/end-package?packageId=${encodeURIComponent(currentPackageId)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Package ended:', data);
+        
+        // Reset state
+        currentPackageId = null;
+        isPackageActive = false;
+        
+        // Update UI
+        setScanStatus('Package session ended. Ready to scan new shipping label.', 'ready');
+        
+        // Clear verification display
+        const verificationElement = document.getElementById('itemVerificationDisplay');
+        if (verificationElement) {
+            verificationElement.remove();
+        }
+        
+        // Stop recording if active
+        if (window.cameraApp) {
+            window.cameraApp.stopRecordingClicked();
+        }
+    })
+    .catch(error => {
+        console.error('Error ending package session:', error);
+        alert('Error ending package session. Please try again.');
+    });
+}
+
+function displayPresignedUrl(presignedUrl, barcodeValue, title = 'Presigned URL') {
     // Add a new element to display the presigned URL
     let urlDisplayElement = document.getElementById('presignedUrlDisplay');
     if (!urlDisplayElement) {
@@ -376,7 +498,7 @@ function displayPresignedUrl(presignedUrl, barcodeValue) {
     }
     
     urlDisplayElement.innerHTML = `
-        <h4>Presigned URL for Barcode: ${barcodeValue}</h4>
+        <h4>${title}: ${barcodeValue}</h4>
         <p style="word-break: break-all; font-family: monospace; font-size: 12px;">
             ${presignedUrl}
         </p>
