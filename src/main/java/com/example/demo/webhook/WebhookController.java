@@ -38,9 +38,9 @@ public class WebhookController {
         Map<String, Object> data = webhookData.data();
 
         switch (webhookData.messageType()) {
-            case LazadaMessageType.TRADE_ORDER_NOTIFICATION ->
+            case TRADE_ORDER_NOTIFICATION ->
                 handleWebhook.handle(data, LazadaTradeOrderEvent.class);
-            case LazadaMessageType.REVERSE_ORDER ->
+            case REVERSE_ORDER ->
                 handleWebhook.handle(data, LazadaReverseOrderEvent.class);
             default -> throw new NotImplementedException("Unsupported message type: " + webhookData.messageType());
         }
