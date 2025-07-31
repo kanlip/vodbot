@@ -1,36 +1,36 @@
 package com.example.demo.video.entity;
 
-
+import java.time.Instant;
+import java.util.List;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
-
-import java.time.Instant;
-import java.util.List;
-
-import com.example.demo.product.entity.BarcodeEntity;
 
 @Document(collection = "videos")
 @Getter
 @Setter
 public class VideoEntity {
+
     @Id
     private String id;
 
-    
-    private ObjectId company;
     private ObjectId companyId;
+
+    @Indexed
     private ObjectId orderId;
+
     private String platformOrderId;
     private ObjectId recordedByUserId;
-    private String packerName;
     private String s3Key;
     private String s3Bucket;
+
+    @Indexed
     private String videoUrl;
+
     private Instant recordedAt;
     private Integer durationSeconds;
     private Double fileSizeMB;
@@ -44,6 +44,7 @@ public class VideoEntity {
 
     @Data
     public static class ItemScan {
+
         private Integer timestampOffsetSeconds;
         private String sku;
         private Integer quantity;

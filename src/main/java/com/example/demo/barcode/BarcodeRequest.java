@@ -4,11 +4,12 @@ import lombok.Data;
 
 @Data
 public class BarcodeRequest {
+
     private String barcodeValue;
     private ScanType scanType;
-    
+
     public enum ScanType {
-        PACKAGE_START,    // First scan - shipping label/packageId
-        ITEM_VERIFICATION // Subsequent scans - item verification
+        PACKAGE_START, // First scan - shipping label/packageId
+        ITEM_VERIFICATION, // Subsequent scans - item verification
     }
 }
