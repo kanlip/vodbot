@@ -44,4 +44,36 @@ public class S3Service implements IS3Service {
         log.info("Presigned URL: [{}]", url);
         return url;
     }
+
+    public String getPresignedUriForBarcode(String barcodeValue) {
+        String bucketName = awsConfiguration.bucket();
+        String userId = "user-id"; // Replace with actual user ID if needed
+        String currentDate = java.time.LocalDate.now().toString();
+        String extension = "mp4"; // Default extension for barcode-related uploads
+        String keyName = String.format("barcode/%s/%s/%s.%s", 
+                userId,
+                currentDate,
+                barcodeValue,
+                extension);
+
+        String url = s3Template.createSignedPutURL(bucketName, keyName, Duration.ofMinutes(10)).toExternalForm();
+        log.info("Presigned URL for barcode [{}]: [{}]", barcodeValue, url);
+        return url;
+    }
+
+    public String getPresignedUriForPackage(String packageId) {
+        String bucketName = awsConfiguration.bucket();
+        String userId = "user-id"; // Replace with actual user ID if needed
+        String currentDate = java.time.LocalDate.now().toString();
+        String extension = "mp4"; // Default extension for package recording
+        String keyName = String.format("package/%s/%s/%s.%s", 
+                userId,
+                currentDate,
+                packageId,
+                extension);
+
+        String url = s3Template.createSignedPutURL(bucketName, keyName, Duration.ofMinutes(10)).toExternalForm();
+        log.info("Presigned URL for package [{}]: [{}]", packageId, url);
+        return url;
+    }
 }
