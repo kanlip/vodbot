@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class HandleWebhook {
+
     private final @NonNull ApplicationEventPublisher eventPublisher;
     private final ObjectMapper mapper;
+
     public <T, U> void handle(T data, Class<U> castType) {
         // Logic to handle the webhook payload
 
