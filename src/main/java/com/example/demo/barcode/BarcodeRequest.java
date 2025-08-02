@@ -7,6 +7,7 @@ public class BarcodeRequest {
 
     private String barcodeValue;
     private ScanType scanType;
+    private String packageId; // Optional: specify which package to scan for (useful for concurrent sessions)
 
     public enum ScanType {
         PACKAGE_START, // First scan - shipping label/packageId
