@@ -28,9 +28,7 @@ public class VideoAdapter implements VideoPort {
     @Override
     public VideoData findOrCreateVideoForPackage(String packageId) {
         // Try to find existing video entity by platform order ID
-        Optional<VideoEntity> existingVideo = videoRepository.findAll().stream()
-                .filter(video -> packageId.equals(video.getPlatformOrderId()))
-                .findFirst();
+        Optional<VideoEntity> existingVideo = videoRepository.findByPlatformOrderId(packageId);
         
         if (existingVideo.isPresent()) {
             log.debug("Found existing video entity for package: {}", packageId);
