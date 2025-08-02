@@ -80,9 +80,7 @@ public class VideoAdapter implements VideoPort {
 
     @Override
     public List<ItemScanData> getScannedItemsForPackage(String packageId) {
-        Optional<VideoEntity> video = videoRepository.findAll().stream()
-                .filter(v -> packageId.equals(v.getPlatformOrderId()))
-                .findFirst();
+        Optional<VideoEntity> video = videoRepository.findByPlatformOrderId(packageId);
         
         if (video.isPresent() && video.get().getItemScans() != null) {
             return video.get().getItemScans().stream()
