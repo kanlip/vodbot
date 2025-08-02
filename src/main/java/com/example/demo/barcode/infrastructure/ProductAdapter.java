@@ -23,10 +23,8 @@ public class ProductAdapter implements ProductPort {
 
     @Override
     public boolean isValidActiveBarcode(String barcodeValue) {
-        List<BarcodeEntity> allBarcodes = productRepository.findAll();
-        return allBarcodes.stream()
-                .anyMatch(barcode -> barcodeValue.equals(barcode.getBarcodeValue()) && 
-                                   "active".equals(barcode.getStatus()));
+        BarcodeEntity barcodeEntity = productRepository.findByBarcodeValueAndStatus(barcodeValue, "active");
+        return barcodeEntity != null;
     }
 
     @Override
