@@ -94,9 +94,7 @@ public class VideoAdapter implements VideoPort {
     }
 
     private VideoEntity findOrCreateVideoEntity(String packageId) {
-        Optional<VideoEntity> existingVideo = videoRepository.findAll().stream()
-                .filter(video -> packageId.equals(video.getPlatformOrderId()))
-                .findFirst();
+        Optional<VideoEntity> existingVideo = videoRepository.findByPlatformOrderId(packageId);
         
         if (existingVideo.isPresent()) {
             return existingVideo.get();
