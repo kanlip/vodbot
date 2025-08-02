@@ -1,22 +1,15 @@
 package com.example.demo.barcode;
 
+import com.example.demo.barcode.application.ItemVerificationService;
+import com.example.demo.barcode.application.ScannedItemsQueryService;
 import com.example.demo.common.IS3Service;
-import com.example.demo.product.IProductRepository;
-import com.example.demo.product.entity.BarcodeEntity;
-import com.example.demo.video.entity.VideoEntity;
-import com.example.demo.video.repository.VideoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -36,10 +29,10 @@ class BarcodeControllerTest {
     private PackageStateService packageStateService;
 
     @MockBean
-    private VideoRepository videoRepository;
+    private ItemVerificationService itemVerificationService;
 
     @MockBean
-    private IProductRepository productRepository;
+    private ScannedItemsQueryService scannedItemsQueryService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -84,23 +77,14 @@ class BarcodeControllerTest {
         PackageStateService.PackageState mockPackageState = new PackageStateService.PackageState(testPackageId, mockPresignedUrl);
         when(packageStateService.getAnyActivePackage()).thenReturn(mockPackageState);
         
-        // Mock barcode validation - create valid barcode entity
-        BarcodeEntity validBarcode = BarcodeEntity.builder()
-                .id(new ObjectId())
-                .barcodeValue(testItemBarcode)
-                .status("active")
-                .platformSkuId("SKU123")
-                .build();
-        when(productRepository.findAll()).thenReturn(List.of(validBarcode));
-        
-        // Mock video repository - return existing video
-        VideoEntity existingVideo = new VideoEntity();
-        existingVideo.setPlatformOrderId(testPackageId);
-        existingVideo.setItemScans(new ArrayList<>());
-        existingVideo.setCreatedAt(Instant.now());
-        existingVideo.setUpdatedAt(Instant.now());
-        when(videoRepository.findAll()).thenReturn(List.of(existingVideo));
-        when(videoRepository.save(any(VideoEntity.class))).thenReturn(existingVideo);
+        // Mock successful item verification
+        ItemVerificationService.ItemVerificationResult successResult = 
+            ItemVerificationService.ItemVerificationResult.success(
+                "Item " + testItemBarcode + " verified and saved for package " + testPackageId,
+                testItemBarcode
+            );
+        when(itemVerificationService.verifyAndSaveItem(testPackageId, testItemBarcode))
+            .thenReturn(successResult);
 
         // When & Then
         mockMvc.perform(post("/api/barcode/scan")
@@ -151,8 +135,14 @@ class BarcodeControllerTest {
         PackageStateService.PackageState mockPackageState = new PackageStateService.PackageState(testPackageId, mockPresignedUrl);
         when(packageStateService.getAnyActivePackage()).thenReturn(mockPackageState);
         
-        // Mock barcode validation - return empty list (no valid barcodes)
-        when(productRepository.findAll()).thenReturn(new ArrayList<>());
+        // Mock item verification failure
+        ItemVerificationService.ItemVerificationResult failureResult = 
+            ItemVerificationService.ItemVerificationResult.failure(
+                "Item " + testItemBarcode + " is not found or inactive in products database",
+                testItemBarcode
+            );
+        when(itemVerificationService.verifyAndSaveItem(testPackageId, testItemBarcode))
+            .thenReturn(failureResult);
 
         // When & Then
         mockMvc.perform(post("/api/barcode/scan")

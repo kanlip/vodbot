@@ -1,19 +1,15 @@
 package com.example.demo.barcode;
 
+import com.example.demo.barcode.application.ItemVerificationService;
+import com.example.demo.barcode.application.ScannedItemsQueryService;
+import com.example.demo.barcode.domain.VideoPort;
 import com.example.demo.common.IS3Service;
-import com.example.demo.product.IProductRepository;
-import com.example.demo.product.entity.BarcodeEntity;
-import com.example.demo.video.entity.VideoEntity;
-import com.example.demo.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/barcode")
@@ -23,8 +19,8 @@ public class BarcodeController {
 
     private final IS3Service s3Service;
     private final PackageStateService packageStateService;
-    private final VideoRepository videoRepository;
-    private final IProductRepository productRepository;
+    private final ItemVerificationService itemVerificationService;
+    private final ScannedItemsQueryService scannedItemsQueryService;
 
     @PostMapping("/scan")
     public ResponseEntity<BarcodeResponse> handleBarcodeScanned(
@@ -122,66 +118,24 @@ public class BarcodeController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        try {
-            // Validate the scanned item against products database
-            boolean isValidItem = validateScannedItem(itemBarcode);
+        // Use application service to verify and save item
+        ItemVerificationService.ItemVerificationResult result = 
+            itemVerificationService.verifyAndSaveItem(activePackage.getPackageId(), itemBarcode);
 
-            if (!isValidItem) {
-                BarcodeResponse response = BarcodeResponse.builder()
-                    .success(false)
-                    .message(
-                        String.format(
-                            "Item %s is not found or inactive in products database",
-                            itemBarcode
-                        )
-                    )
-                    .barcodeValue(itemBarcode)
-                    .responseType(BarcodeResponse.ResponseType.ERROR)
-                    .shouldStartRecording(false)
-                    .build();
+        BarcodeResponse response = BarcodeResponse.builder()
+            .success(result.isSuccess())
+            .message(result.getMessage())
+            .barcodeValue(result.getBarcodeValue())
+            .responseType(result.isSuccess() ? 
+                BarcodeResponse.ResponseType.ITEM_VERIFIED : 
+                BarcodeResponse.ResponseType.ERROR)
+            .shouldStartRecording(false)
+            .presignedUrl(result.isSuccess() ? activePackage.getPresignedUrl() : null)
+            .build();
 
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            // Save the scanned item to the database
-            saveItemScanToVideo(activePackage.getPackageId(), itemBarcode);
-
-            log.info(
-                "Item {} successfully verified and saved for package {}",
-                itemBarcode,
-                activePackage.getPackageId()
-            );
-
-            BarcodeResponse response = BarcodeResponse.builder()
-                .success(true)
-                .message(
-                    String.format(
-                        "Item %s verified and saved for package %s",
-                        itemBarcode,
-                        activePackage.getPackageId()
-                    )
-                )
-                .barcodeValue(itemBarcode)
-                .responseType(BarcodeResponse.ResponseType.ITEM_VERIFIED)
-                .shouldStartRecording(false)
-                .presignedUrl(activePackage.getPresignedUrl()) // Include the presigned URL from the active package
-                .build();
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            log.error("Error verifying and saving item {}: {}", itemBarcode, e.getMessage(), e);
-            
-            BarcodeResponse response = BarcodeResponse.builder()
-                .success(false)
-                .message("Error processing item scan: " + e.getMessage())
-                .barcodeValue(itemBarcode)
-                .responseType(BarcodeResponse.ResponseType.ERROR)
-                .shouldStartRecording(false)
-                .build();
-
-            return ResponseEntity.badRequest().body(response);
-        }
+        return result.isSuccess() ? 
+            ResponseEntity.ok(response) : 
+            ResponseEntity.badRequest().body(response);
     }
 
     @PostMapping("/end-package")
@@ -207,115 +161,12 @@ public class BarcodeController {
         log.info("Getting scanned items for package: {}", packageId);
         
         try {
-            var scannedItems = getScannedItemsForPackage(packageId);
+            List<VideoPort.ItemScanData> scannedItems = scannedItemsQueryService.getScannedItems(packageId);
             return ResponseEntity.ok(scannedItems);
-        } catch (Exception e) {
+        } catch (ScannedItemsQueryService.ScannedItemsQueryException e) {
             log.error("Error retrieving scanned items for package {}: {}", packageId, e.getMessage(), e);
-            return ResponseEntity.badRequest().body("Error retrieving scanned items: " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    /**
-     * Validate if a barcode exists in the products database and is active
-     */
-    private boolean validateScannedItem(String barcodeValue) {
-        log.debug("Validating barcode: {}", barcodeValue);
-        
-        List<BarcodeEntity> allBarcodes = productRepository.findAll();
-        boolean isValid = allBarcodes.stream()
-                .anyMatch(barcode -> barcodeValue.equals(barcode.getBarcodeValue()) && 
-                                   "active".equals(barcode.getStatus()));
-        
-        if (isValid) {
-            log.info("Barcode {} validated successfully", barcodeValue);
-        } else {
-            log.warn("Barcode {} not found or inactive in products database", barcodeValue);
-        }
-        
-        return isValid;
-    }
-
-    /**
-     * Save the scanned item to the video entity in the database
-     */
-    private void saveItemScanToVideo(String packageId, String barcodeValue) {
-        log.info("Saving item scan to video for package: {}, barcode: {}", packageId, barcodeValue);
-        
-        // Find or create video entity for this package
-        VideoEntity videoEntity = findOrCreateVideoForPackage(packageId);
-        
-        // Get barcode entity for additional details
-        BarcodeEntity barcodeEntity = findBarcodeEntity(barcodeValue);
-        
-        // Create item scan record
-        VideoEntity.ItemScan itemScan = new VideoEntity.ItemScan();
-        itemScan.setTimestampOffsetSeconds(0); // Default timestamp
-        itemScan.setSku(barcodeEntity != null ? barcodeEntity.getPlatformSkuId() : barcodeValue);
-        itemScan.setQuantity(1); // Default quantity
-        itemScan.setStatus(barcodeEntity != null ? "verified" : "unknown");
-        if (barcodeEntity != null) {
-            itemScan.setBarcodeEntityId(barcodeEntity.getId());
-        }
-        
-        // Add to video entity
-        if (videoEntity.getItemScans() == null) {
-            videoEntity.setItemScans(new ArrayList<>());
-        }
-        videoEntity.getItemScans().add(itemScan);
-        videoEntity.setUpdatedAt(Instant.now());
-        
-        // Save video entity
-        videoRepository.save(videoEntity);
-        
-        log.info("Item scan saved successfully: {}", itemScan);
-    }
-
-    /**
-     * Find existing video entity for package or create a new one
-     */
-    private VideoEntity findOrCreateVideoForPackage(String packageId) {
-        // Try to find existing video entity by platform order ID
-        Optional<VideoEntity> existingVideo = videoRepository.findAll().stream()
-                .filter(video -> packageId.equals(video.getPlatformOrderId()))
-                .findFirst();
-        
-        if (existingVideo.isPresent()) {
-            log.debug("Found existing video entity for package: {}", packageId);
-            return existingVideo.get();
-        }
-        
-        // Create new video entity
-        log.info("Creating new video entity for package: {}", packageId);
-        VideoEntity newVideo = new VideoEntity();
-        newVideo.setPlatformOrderId(packageId);
-        newVideo.setStatus("recording");
-        newVideo.setCreatedAt(Instant.now());
-        newVideo.setUpdatedAt(Instant.now());
-        newVideo.setItemScans(new ArrayList<>());
-        
-        return videoRepository.save(newVideo);
-    }
-
-    /**
-     * Find barcode entity by barcode value
-     */
-    private BarcodeEntity findBarcodeEntity(String barcodeValue) {
-        List<BarcodeEntity> allBarcodes = productRepository.findAll();
-        return allBarcodes.stream()
-                .filter(barcode -> barcodeValue.equals(barcode.getBarcodeValue()))
-                .filter(barcode -> "active".equals(barcode.getStatus()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * Get all scanned items for a package
-     */
-    private List<VideoEntity.ItemScan> getScannedItemsForPackage(String packageId) {
-        Optional<VideoEntity> video = videoRepository.findAll().stream()
-                .filter(v -> packageId.equals(v.getPlatformOrderId()))
-                .findFirst();
-        
-        return video.map(VideoEntity::getItemScans).orElse(new ArrayList<>());
-    }
 }
