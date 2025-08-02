@@ -40,11 +40,6 @@ public class ProductAdapter implements ProductPort {
     }
 
     private BarcodeEntity findBarcodeEntity(String barcodeValue) {
-        List<BarcodeEntity> allBarcodes = productRepository.findAll();
-        return allBarcodes.stream()
-                .filter(barcode -> barcodeValue.equals(barcode.getBarcodeValue()))
-                .filter(barcode -> "active".equals(barcode.getStatus()))
-                .findFirst()
-                .orElse(null);
+        return productRepository.findByBarcodeValueAndStatus(barcodeValue, "active");
     }
 }
