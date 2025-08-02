@@ -64,6 +64,13 @@ public class ItemVerificationService {
         }
     }
 
+    /**
+     * Check if a barcode is a valid product barcode (used for scan type determination)
+     */
+    public boolean isValidProductBarcode(String barcodeValue) {
+        return barcodeValidationService.validateBarcode(barcodeValue);
+    }
+
     private VideoPort.ItemScanData createItemScanData(String barcodeValue) {
         String sku = productPort.getSkuForBarcode(barcodeValue);
         String barcodeEntityId = productPort.getBarcodeEntityId(barcodeValue);

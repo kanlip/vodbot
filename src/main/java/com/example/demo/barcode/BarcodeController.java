@@ -33,21 +33,17 @@ public class BarcodeController {
         );
 
         try {
-            // If no scan type specified, auto-determine based on active packages
+            // If no scan type specified, auto-determine based on barcode pattern and active packages
             BarcodeRequest.ScanType scanType = request.getScanType();
             if (scanType == null) {
-                // If there's no active package, this is a package start
-                // If there's an active package, this is item verification
-                scanType = packageStateService.getAnyActivePackage() == null
-                    ? BarcodeRequest.ScanType.PACKAGE_START
-                    : BarcodeRequest.ScanType.ITEM_VERIFICATION;
-                log.info("Auto-determined scan type: {}", scanType);
+                scanType = determineScanType(request.getBarcodeValue());
+                log.info("Auto-determined scan type: {} for barcode: {}", scanType, request.getBarcodeValue());
             }
 
             if (scanType == BarcodeRequest.ScanType.PACKAGE_START) {
                 return handlePackageStart(request.getBarcodeValue());
             } else {
-                return handleItemVerification(request.getBarcodeValue());
+                return handleItemVerification(request.getBarcodeValue(), request.getPackageId());
             }
         } catch (Exception e) {
             log.error("Error processing barcode scan: {}", e.getMessage(), e);
@@ -69,10 +65,22 @@ public class BarcodeController {
     ) {
         log.info("Processing package start for packageId: {}", packageId);
 
-        // TODO - solve real package with multiple sessions
-
-        // Clear any existing packages (for simplicity, only one active package at a time)
-        packageStateService.clearAllPackages();
+        // Check if this package is already active
+        PackageStateService.PackageState existingPackage = 
+            packageStateService.getActivePackage(packageId);
+            
+        if (existingPackage != null) {
+            log.info("Package {} is already active, returning existing session", packageId);
+            BarcodeResponse response = BarcodeResponse.builder()
+                .success(true)
+                .message("Package recording session already active. Continue scanning items to verify.")
+                .presignedUrl(existingPackage.getPresignedUrl())
+                .barcodeValue(packageId)
+                .responseType(BarcodeResponse.ResponseType.PACKAGE_STARTED)
+                .shouldStartRecording(false) // Recording should already be started
+                .build();
+            return ResponseEntity.ok(response);
+        }
 
         // Generate presigned URL for the package
         String presignedUrl = s3Service.getPresignedUriForPackage(packageId);
@@ -95,32 +103,71 @@ public class BarcodeController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Determines scan type based on barcode value and existing package state
+     */
+    private BarcodeRequest.ScanType determineScanType(String barcodeValue) {
+        // First check if this barcode is already an active package
+        PackageStateService.PackageState existingPackage = 
+            packageStateService.getActivePackage(barcodeValue);
+        if (existingPackage != null) {
+            // This package is already active, so this is a package start (re-scan)
+            return BarcodeRequest.ScanType.PACKAGE_START;
+        }
+        
+        // Check if this is a valid product barcode
+        boolean isValidProduct = itemVerificationService.isValidProductBarcode(barcodeValue);
+        if (isValidProduct) {
+            // This is a product barcode, so it's item verification
+            return BarcodeRequest.ScanType.ITEM_VERIFICATION;
+        }
+        
+        // If it's not a known product barcode, assume it's a package start
+        // This covers shipping labels, package IDs, etc.
+        return BarcodeRequest.ScanType.PACKAGE_START;
+    }
+
     private ResponseEntity<BarcodeResponse> handleItemVerification(
-        String itemBarcode
+        String itemBarcode, 
+        String requestedPackageId
     ) {
-        log.info("Processing item verification for item: {}", itemBarcode);
+        log.info("Processing item verification for item: {}, requested package: {}", itemBarcode, requestedPackageId);
 
-        // Get the active package
-        PackageStateService.PackageState activePackage =
-            packageStateService.getAnyActivePackage();
-
-        if (activePackage == null) {
-            BarcodeResponse response = BarcodeResponse.builder()
-                .success(false)
-                .message(
-                    "No active package found. Please scan a shipping label first."
-                )
-                .barcodeValue(itemBarcode)
-                .responseType(BarcodeResponse.ResponseType.ERROR)
-                .shouldStartRecording(false)
-                .build();
-
-            return ResponseEntity.badRequest().body(response);
+        // Determine which package to use for this item scan
+        PackageStateService.PackageState targetPackage = null;
+        
+        if (requestedPackageId != null) {
+            // Use the explicitly requested package
+            targetPackage = packageStateService.getActivePackage(requestedPackageId);
+            if (targetPackage == null) {
+                BarcodeResponse response = BarcodeResponse.builder()
+                    .success(false)
+                    .message(String.format("Requested package %s is not active. Please start recording first.", requestedPackageId))
+                    .barcodeValue(itemBarcode)
+                    .responseType(BarcodeResponse.ResponseType.ERROR)
+                    .shouldStartRecording(false)
+                    .build();
+                return ResponseEntity.badRequest().body(response);
+            }
+        } else {
+            // No specific package requested, use the most recently started package
+            targetPackage = packageStateService.getMostRecentActivePackage();
+            if (targetPackage == null) {
+                BarcodeResponse response = BarcodeResponse.builder()
+                    .success(false)
+                    .message("No active package found. Please scan a shipping label first.")
+                    .barcodeValue(itemBarcode)
+                    .responseType(BarcodeResponse.ResponseType.ERROR)
+                    .shouldStartRecording(false)
+                    .build();
+                return ResponseEntity.badRequest().body(response);
+            }
+            log.info("Using most recent active package: {}", targetPackage.getPackageId());
         }
 
         // Use application service to verify and save item
         ItemVerificationService.ItemVerificationResult result = 
-            itemVerificationService.verifyAndSaveItem(activePackage.getPackageId(), itemBarcode);
+            itemVerificationService.verifyAndSaveItem(targetPackage.getPackageId(), itemBarcode);
 
         BarcodeResponse response = BarcodeResponse.builder()
             .success(result.isSuccess())
@@ -130,7 +177,7 @@ public class BarcodeController {
                 BarcodeResponse.ResponseType.ITEM_VERIFIED : 
                 BarcodeResponse.ResponseType.ERROR)
             .shouldStartRecording(false)
-            .presignedUrl(result.isSuccess() ? activePackage.getPresignedUrl() : null)
+            .presignedUrl(result.isSuccess() ? targetPackage.getPresignedUrl() : null)
             .build();
 
         return result.isSuccess() ? 

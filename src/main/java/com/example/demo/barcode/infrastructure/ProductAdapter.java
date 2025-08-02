@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Infrastructure adapter implementing ProductPort using the product repository
@@ -23,23 +24,23 @@ public class ProductAdapter implements ProductPort {
 
     @Override
     public boolean isValidActiveBarcode(String barcodeValue) {
-        BarcodeEntity barcodeEntity = productRepository.findByBarcodeValueAndStatus(barcodeValue, "active");
-        return barcodeEntity != null;
+        Optional<BarcodeEntity> barcodeEntity = productRepository.findByBarcodeValueAndStatus(barcodeValue, "active");
+        return barcodeEntity.isPresent();
     }
 
     @Override
     public String getSkuForBarcode(String barcodeValue) {
-        BarcodeEntity barcodeEntity = findBarcodeEntity(barcodeValue);
-        return barcodeEntity != null ? barcodeEntity.getPlatformSkuId() : null;
+        Optional<BarcodeEntity> barcodeEntity = findBarcodeEntity(barcodeValue);
+        return barcodeEntity.map(BarcodeEntity::getPlatformSkuId).orElse(null);
     }
 
     @Override
     public String getBarcodeEntityId(String barcodeValue) {
-        BarcodeEntity barcodeEntity = findBarcodeEntity(barcodeValue);
-        return barcodeEntity != null ? barcodeEntity.getId().toString() : null;
+        Optional<BarcodeEntity> barcodeEntity = findBarcodeEntity(barcodeValue);
+        return barcodeEntity.map(entity -> entity.getId().toString()).orElse(null);
     }
 
-    private BarcodeEntity findBarcodeEntity(String barcodeValue) {
+    private Optional<BarcodeEntity> findBarcodeEntity(String barcodeValue) {
         return productRepository.findByBarcodeValueAndStatus(barcodeValue, "active");
     }
 }

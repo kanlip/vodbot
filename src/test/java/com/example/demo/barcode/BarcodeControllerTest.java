@@ -47,6 +47,8 @@ class BarcodeControllerTest {
 
         // Mock no active packages (first scan)
         when(packageStateService.getAnyActivePackage()).thenReturn(null);
+        when(packageStateService.getActivePackage(testPackageId)).thenReturn(null);
+        when(itemVerificationService.isValidProductBarcode(testPackageId)).thenReturn(false);
         when(s3Service.getPresignedUriForPackage(testPackageId)).thenReturn(mockPresignedUrl);
         when(packageStateService.startPackage(testPackageId, mockPresignedUrl))
                 .thenReturn(new PackageStateService.PackageState(testPackageId, mockPresignedUrl));
@@ -76,6 +78,12 @@ class BarcodeControllerTest {
         // Mock active package exists (subsequent scan)
         PackageStateService.PackageState mockPackageState = new PackageStateService.PackageState(testPackageId, mockPresignedUrl);
         when(packageStateService.getAnyActivePackage()).thenReturn(mockPackageState);
+        
+        // Mock that this barcode is a valid product (for auto-determination)
+        when(itemVerificationService.isValidProductBarcode(testItemBarcode)).thenReturn(true);
+        
+        // Mock most recent active package exists (for item verification)
+        when(packageStateService.getMostRecentActivePackage()).thenReturn(mockPackageState);
         
         // Mock successful item verification
         ItemVerificationService.ItemVerificationResult successResult = 
@@ -108,6 +116,8 @@ class BarcodeControllerTest {
 
         // Mock no active packages (first scan)
         when(packageStateService.getAnyActivePackage()).thenReturn(null);
+        when(packageStateService.getActivePackage(testPackageId)).thenReturn(null);
+        when(itemVerificationService.isValidProductBarcode(testPackageId)).thenReturn(false);
         when(s3Service.getPresignedUriForPackage(testPackageId))
                 .thenThrow(new RuntimeException("S3 service error"));
 
@@ -134,6 +144,12 @@ class BarcodeControllerTest {
         // Mock active package exists
         PackageStateService.PackageState mockPackageState = new PackageStateService.PackageState(testPackageId, mockPresignedUrl);
         when(packageStateService.getAnyActivePackage()).thenReturn(mockPackageState);
+        
+        // Mock that this barcode is a valid product (so it's recognized as item verification)
+        when(itemVerificationService.isValidProductBarcode(testItemBarcode)).thenReturn(true);
+        
+        // Mock most recent active package exists (for item verification)
+        when(packageStateService.getMostRecentActivePackage()).thenReturn(mockPackageState);
         
         // Mock item verification failure
         ItemVerificationService.ItemVerificationResult failureResult = 
