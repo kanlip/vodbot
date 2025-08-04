@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -22,12 +23,16 @@ public class BarcodeEntity {
     @Id
     private ObjectId id;
 
+    @Indexed
     private ObjectId company;
 
+    @Indexed
     private String barcodeValue;
     private String type; // system_generated, user_defined, platform_sync
+    @Indexed
     private String status; // active, inactive
 
+    @Indexed
     private Platform platform; // shopee, lazada, tiktokshop, internal
     private String platformProductId;
     private String platformSkuId;
