@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,34 +85,106 @@ public class BarcodeEntityMongoIntegrationTest {
     }
 
     @Test
-    void shouldReturnEmptyWhenBarcodeInactive() {
-        // Given
-        BarcodeEntity inactiveBarcode = BarcodeEntity.builder()
+    void shouldCreateBarcodeWithListenerDefaults() {
+        // Given - Create barcode entity without barcode value, type, or status
+        BarcodeEntity barcode = BarcodeEntity.builder()
                 .company(new ObjectId())
-                .barcodeValue("INACTIVE123")
-                .type("system_generated")
-                .status("inactive")
-                .platform(Platform.LAZADA)
-                .platformProductId("PROD456")
-                .platformSkuId("SKU456")
-                .productName("Inactive Product")
+                .platform(Platform.TIKTOK)
+                .platformProductId("PROD789")
+                .platformSkuId("SKU789")
+                .productName("Test Product with Defaults")
+                .build();
+
+        // When - Save to MongoDB (triggers entity listener)
+        BarcodeEntity savedBarcode = productRepository.insert(barcode);
+
+        // Then - Verify listener set defaults
+        assertThat(savedBarcode.getBarcodeValue()).isNotNull();
+        assertThat(savedBarcode.getBarcodeValue()).startsWith("SYS_");
+        assertThat(savedBarcode.getType()).isEqualTo("system_generated");
+        assertThat(savedBarcode.getStatus()).isEqualTo("active");
+        assertThat(savedBarcode.getCreatedAt()).isNotNull();
+        assertThat(savedBarcode.getUpdatedAt()).isNotNull();
+
+        // Cleanup
+        productRepository.deleteById(savedBarcode.getId());
+    }
+
+    @Test
+    void shouldFindBarcodesByCompanyAndStatus() {
+        // Given
+        ObjectId companyId = new ObjectId();
+        BarcodeEntity activeBarcode = BarcodeEntity.builder()
+                .company(companyId)
+                .barcodeValue("COMPANY_ACTIVE_123")
+                .type("user_defined")
+                .status("active")
+                .platform(Platform.SHOPEE)
+                .platformProductId("PROD_COMP_1")
+                .platformSkuId("SKU_COMP_1")
+                .productName("Company Active Product")
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
 
-        BarcodeEntity savedBarcode = productRepository.insert(inactiveBarcode);
+        BarcodeEntity inactiveBarcode = BarcodeEntity.builder()
+                .company(companyId)
+                .barcodeValue("COMPANY_INACTIVE_456")
+                .type("user_defined")
+                .status("inactive")
+                .platform(Platform.SHOPEE)
+                .platformProductId("PROD_COMP_2")
+                .platformSkuId("SKU_COMP_2")
+                .productName("Company Inactive Product")
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
 
-        // When - Try to find active barcode (should not find it)
-        Optional<BarcodeEntity> notFound = productRepository.findByBarcodeValueAndStatus("INACTIVE123", "active");
+        productRepository.insert(activeBarcode);
+        productRepository.insert(inactiveBarcode);
+
+        // When - Query by company and status
+        List<BarcodeEntity> activeBarcodes = productRepository.findByCompanyAndStatus(companyId, "active");
+        List<BarcodeEntity> inactiveBarcodes = productRepository.findByCompanyAndStatus(companyId, "inactive");
 
         // Then
-        assertThat(notFound).isEmpty();
-
-        // But should find it when searching for inactive
-        Optional<BarcodeEntity> found = productRepository.findByBarcodeValueAndStatus("INACTIVE123", "inactive");
-        assertThat(found).isPresent();
+        assertThat(activeBarcodes).hasSize(1);
+        assertThat(activeBarcodes.get(0).getBarcodeValue()).isEqualTo("COMPANY_ACTIVE_123");
+        
+        assertThat(inactiveBarcodes).hasSize(1);
+        assertThat(inactiveBarcodes.get(0).getBarcodeValue()).isEqualTo("COMPANY_INACTIVE_456");
 
         // Cleanup
-        productRepository.deleteById(savedBarcode.getId());
+        productRepository.deleteById(activeBarcode.getId());
+        productRepository.deleteById(inactiveBarcode.getId());
+    }
+
+    @Test
+    void shouldFindBarcodesByPlatformAndStatus() {
+        // Given
+        BarcodeEntity lazadaBarcode = BarcodeEntity.builder()
+                .company(new ObjectId())
+                .barcodeValue("LAZADA_123")
+                .type("platform_sync")
+                .status("active")
+                .platform(Platform.LAZADA)
+                .platformProductId("LAZADA_PROD_1")
+                .platformSkuId("LAZADA_SKU_1")
+                .productName("Lazada Product")
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+
+        productRepository.insert(lazadaBarcode);
+
+        // When
+        List<BarcodeEntity> lazadaBarcodes = productRepository.findByPlatformAndStatus(Platform.LAZADA, "active");
+
+        // Then
+        assertThat(lazadaBarcodes).isNotEmpty();
+        assertThat(lazadaBarcodes).anyMatch(b -> b.getBarcodeValue().equals("LAZADA_123"));
+
+        // Cleanup
+        productRepository.deleteById(lazadaBarcode.getId());
     }
 }
