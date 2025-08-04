@@ -48,10 +48,21 @@ public class PackageStateService {
     
     /**
      * Check if there's any active package (for determining if next scan is item verification)
+     * @deprecated Use getMostRecentActivePackage() for better concurrent session support
      */
+    @Deprecated
     public PackageState getAnyActivePackage() {
         return activePackages.values().stream()
                 .findFirst()
+                .orElse(null);
+    }
+    
+    /**
+     * Get the most recently started active package (for concurrent session support)
+     */
+    public PackageState getMostRecentActivePackage() {
+        return activePackages.values().stream()
+                .max((p1, p2) -> p1.getStartTime().compareTo(p2.getStartTime()))
                 .orElse(null);
     }
     
