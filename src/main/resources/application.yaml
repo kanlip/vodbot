@@ -41,6 +41,8 @@ springdoc:
 lazada:
   product:
     url : ${LAZADA_PRODUCT_URL:https://api.lazada.co.th/rest}
+    appKey: ${LAZADA_APP_KEY:}
+    appSecret: ${LAZADA_APP_SECRET:}
 shopee:
   product:
       url: ${SHOPEE_PRODUCT_URL:https://partner.shopeemobile.com/api/v2/product}

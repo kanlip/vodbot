@@ -36,7 +36,8 @@ public class WebhookController {
     ) {
         log.debug("Lazada webhook received");
         Map<String, Object> data = webhookData.data();
-
+        data.put("sellerId", webhookData.sellerId());
+        log.info(webhookData.toString());
         switch (webhookData.messageType()) {
             case TRADE_ORDER_NOTIFICATION -> handleWebhook.handle(
                 data,
