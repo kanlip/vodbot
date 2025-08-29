@@ -1,14 +1,14 @@
 services:
-  mongodb:
-    image: mongo:latest
+  postgres:
+    image: postgres:16.10
     environment:
-      - MONGO_INITDB_DATABASE=mydatabase
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=secret
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
     ports:
-      - 27017:27017
+      - "5432:5432"
     volumes:
-      - mongo-data:/data/db
+      - postgres-data:/var/lib/postgresql/data
   localstack:
     image: localstack/localstack
     ports:
@@ -20,4 +20,4 @@ services:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "./init-scripts:/etc/localstack/init/ready.d"
 volumes:
-  mongo-data:
+  postgres-data:

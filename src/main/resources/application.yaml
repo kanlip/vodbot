@@ -9,6 +9,21 @@ spring:
       prefix: '/templates/'
   application:
     name: demo
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mydatabase}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:secret}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
   cloud:
     config:
       import-check:
@@ -26,10 +41,7 @@ spring:
     virtual:
       enabled: true
   modulith:
-    events:
-      mongodb:
-        transaction-management:
-          enabled: false
+    # modulith settings
 springdoc:
   api-docs:
     path: /v3/api-docs
