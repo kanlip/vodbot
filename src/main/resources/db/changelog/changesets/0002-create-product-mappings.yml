@@ -1,0 +1,123 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0002-create-product-mappings
+      author: copilot
+      changes:
+        - createTable:
+            tableName: product_mappings
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: sku
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: barcode
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: platform
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform_product_id
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform_alias
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: erp_code
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: seller_id
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description
+                  type: VARCHAR(1000)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+        
+        - createIndex:
+            indexName: idx_product_mappings_seller_id
+            tableName: product_mappings
+            columns:
+              - column:
+                  name: seller_id
+        
+        - createIndex:
+            indexName: idx_product_mappings_seller_platform
+            tableName: product_mappings
+            columns:
+              - column:
+                  name: seller_id
+              - column:
+                  name: platform
+        
+        - createIndex:
+            indexName: idx_product_mappings_sku
+            tableName: product_mappings
+            columns:
+              - column:
+                  name: seller_id
+              - column:
+                  name: sku
+            unique: true
+        
+        - createIndex:
+            indexName: idx_product_mappings_barcode
+            tableName: product_mappings
+            columns:
+              - column:
+                  name: seller_id
+              - column:
+                  name: barcode
+            unique: true
+        
+        - createIndex:
+            indexName: idx_product_mappings_platform_product
+            tableName: product_mappings
+            columns:
+              - column:
+                  name: seller_id
+              - column:
+                  name: platform
+              - column:
+                  name: platform_product_id
+            unique: true

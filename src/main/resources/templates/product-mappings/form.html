@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${mapping.id != null ? 'Edit Product Mapping' : 'Create Product Mapping'}">Product Mapping Form</title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <style>
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .form-section {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .generated-info {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 th:text="${mapping.id != null ? 'Edit Product Mapping' : 'Create Product Mapping'}"></h1>
+                <a href="/product-mappings" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+            
+            <!-- Error Messages -->
+            <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${param.error[0]}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <div th:if="${mapping.id == null}" class="generated-info">
+                <h6><i class="bi bi-info-circle"></i> Auto-Generation</h6>
+                <p class="mb-0">
+                    <strong>SKU</strong> and <strong>Barcode</strong> will be automatically generated if not provided.
+                    You can override this by providing your own values.
+                </p>
+            </div>
+            
+            <form th:action="${mapping.id != null ? '/product-mappings/' + mapping.id + '/edit' : '/product-mappings/create'}" 
+                  method="post" th:object="${mapping}">
+                
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h5 class="mb-3">Basic Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="sellerId" class="form-label required-field">Seller ID</label>
+                            <input type="text" class="form-control" id="sellerId" th:field="*{sellerId}" required>
+                            <div class="form-text">Your unique seller identifier</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="platform" class="form-label required-field">Platform</label>
+                            <select class="form-select" id="platform" th:field="*{platform}" required>
+                                <option value="">Select Platform</option>
+                                <option th:each="platform : ${platforms}" th:value="${platform}" th:text="${platform}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="platformProductId" class="form-label required-field">Platform Product ID</label>
+                            <input type="text" class="form-control" id="platformProductId" th:field="*{platformProductId}" required>
+                            <div class="form-text">Product ID from the platform (e.g., Shopee item ID)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" th:field="*{productName}">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SKU and Barcode -->
+                <div class="form-section">
+                    <h5 class="mb-3">Product Identifiers</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="sku" class="form-label">SKU</label>
+                            <input type="text" class="form-control" id="sku" th:field="*{sku}">
+                            <div class="form-text">Stock Keeping Unit - leave blank to auto-generate</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="barcode" class="form-label">Barcode</label>
+                            <input type="text" class="form-control" id="barcode" th:field="*{barcode}">
+                            <div class="form-text">Product barcode - leave blank to auto-generate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Information -->
+                <div class="form-section">
+                    <h5 class="mb-3">Additional Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="platformAlias" class="form-label">Platform Alias</label>
+                            <input type="text" class="form-control" id="platformAlias" th:field="*{platformAlias}">
+                            <div class="form-text">Alternative name used on the platform</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="erpCode" class="form-label">ERP Code</label>
+                            <input type="text" class="form-control" id="erpCode" th:field="*{erpCode}">
+                            <div class="form-text">Code used in your ERP system</div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+                            <div class="form-text">Additional notes or description</div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" th:if="${mapping.id != null}">
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="active" th:field="*{active}">
+                                <label class="form-check-label" for="active">
+                                    Active
+                                </label>
+                                <div class="form-text">Uncheck to deactivate this mapping</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between">
+                    <a href="/product-mappings" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> 
+                        <span th:text="${mapping.id != null ? 'Update Mapping' : 'Create Mapping'}"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

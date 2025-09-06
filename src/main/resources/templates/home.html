@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTMX Camera Selector App</title>
+    <title>VodBot - Multi-Platform E-commerce Management</title>
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
     <!-- Hyperscript for fancier stuff -->
@@ -11,139 +11,182 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            background-color: #f4f4f4;
+            background-color: #f8f9fa;
         }
-        .container {
+        .hero-section {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .feature-card {
             background-color: #fff;
-            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 700px;
+            padding: 2rem;
+            height: 100%;
+            transition: transform 0.2s ease;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 25px;
+        .feature-card:hover {
+            transform: translateY(-5px);
         }
-        .controls {
-            margin-bottom: 20px;
+        .feature-icon {
+            font-size: 3rem;
+            color: #007bff;
+            margin-bottom: 1rem;
         }
-        label {
-            margin-right: 10px;
+        .navbar-brand {
             font-weight: bold;
-            color: #555;
-        }
-        select, button {
-            padding: 10px 15px;
-            margin: 5px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        select:focus, button:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        button[disabled] { /* Use CSS attribute selector for HTMX's disabled state */
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        video {
-            display: block;
-            width: 100%;
-            max-width: 640px;
-            height: auto;
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            background-color: #eee;
-            margin-top: 20px;
-        }
-        #status {
-            margin-top: 15px;
-            font-size: 1.1em;
-            color: #d9534f;
-        }
-        .mirror-toggle {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .mirror-toggle input[type="checkbox"] {
-            margin-right: 8px;
-            width: 18px;
-            height: 18px;
-        }
-        .mirror-toggle label {
-            font-weight: normal;
-        }
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        .video-wrapper video.mirrored {
-            transform: scaleX(-1);
+            color: #007bff !important;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Live Camera Feed (HTMX Enabled)</h1>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                📦 VodBot
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/product-mappings">Product Mappings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/api/swagger-ui.html" target="_blank">API Docs</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <div class="controls">
-        <label for="cameraSelector">Select Camera:</label>
-        <select id="cameraSelector" hx-on:click="cameraApp.handleCameraChange(this.value)"></select>
-        <button id="startButton" hx-on:click="cameraApp.startCameraClicked()" disabled>Start Camera</button>
-        <button id="stopButton" hx-on:click="cameraApp.stopCamera()" disabled>Stop Camera</button>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4 mb-4">VodBot E-commerce Hub</h1>
+            <p class="lead">Streamline your multi-platform e-commerce operations with centralized product management</p>
+        </div>
     </div>
 
-    <div class="mirror-toggle">
-        <input type="checkbox" id="mirrorCheckbox" hx-on:change="cameraApp.toggleMirror(this.checked)">
-        <label for="mirrorCheckbox">Mirror my video (for front cameras)</label>
+    <!-- Features Section -->
+    <div class="container my-5">
+        <h2 class="text-center mb-5">Platform Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">🔗</div>
+                    <h4>Product Mapping Hub</h4>
+                    <p>Central mapping system for SKU, barcode, platform aliases, and ERP codes across Shopee, Lazada, and TikTok Shop</p>
+                    <a href="/product-mappings" class="btn btn-primary">Manage Mappings</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">🏪</div>
+                    <h4>Multi-Platform Sync</h4>
+                    <p>Automatically sync products from seller platforms and generate SKUs and barcodes when needed</p>
+                    <a href="/product-mappings" class="btn btn-outline-primary">Start Syncing</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">📊</div>
+                    <h4>Inventory Management</h4>
+                    <p>Track and manage your inventory across multiple platforms with unified product identifiers</p>
+                    <a href="/product-mappings" class="btn btn-outline-primary">View Products</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="recording-controls">
-        <button id="recordButton" hx-on:click="cameraApp.startRecordingClicked()">Start Recording</button>
-        <button id="stopRecordButton" hx-on:click="cameraApp.stopRecordingClicked()">Stop Recording</button>
-        <button id="downloadButton" hx-on:click="cameraApp.downloadRecordingClicked()">Download Video</button>
+
+    <!-- Quick Actions -->
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <a href="/product-mappings/create" class="btn btn-success w-100">
+                                    ➕ Create New Product Mapping
+                                </a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="/product-mappings" class="btn btn-info w-100">
+                                    📋 View All Mappings
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="video-wrapper">
-        <video id="cameraFeed" autoplay playsinline></video>
+    <!-- Camera/Barcode Section (Original Content) -->
+    <div class="container mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Barcode Scanner</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="controls mb-3">
+                            <label for="cameraSelector" class="form-label">Select Camera:</label>
+                            <select class="form-select" id="cameraSelector" hx-on:click="cameraApp.handleCameraChange(this.value)"></select>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex mb-3">
+                            <button id="startButton" class="btn btn-success" hx-on:click="cameraApp.startCameraClicked()" disabled>Start Camera</button>
+                            <button id="stopButton" class="btn btn-danger" hx-on:click="cameraApp.stopCamera()" disabled>Stop Camera</button>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="mirrorCheckbox" hx-on:change="cameraApp.toggleMirror(this.checked)">
+                            <label class="form-check-label" for="mirrorCheckbox">
+                                Mirror video (for front cameras)
+                            </label>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button id="recordButton" class="btn btn-primary" hx-on:click="cameraApp.startRecordingClicked()">Start Recording</button>
+                            <button id="stopRecordButton" class="btn btn-warning" hx-on:click="cameraApp.stopRecordingClicked()">Stop Recording</button>
+                            <button id="downloadButton" class="btn btn-info" hx-on:click="cameraApp.downloadRecordingClicked()">Download Video</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="video-wrapper text-center">
+                            <video id="cameraFeed" autoplay playsinline class="img-fluid border rounded" style="max-height: 300px;"></video>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div id="scannedOutput">
+                            <h6>Last Scanned Value:</h6>
+                            <p id="lastScanValue" class="alert alert-info">Waiting for scan...</p>
+                        </div>
+                        <div id="scanStatus" class="alert alert-secondary">Ready to scan.</div>
+                        <p class="text-muted small">
+                            The barcode scanner will automatically detect and capture barcode values when the camera is active.
+                        </p>
+                        <div id="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-<!--    <label for="barcodeInput">Scan Barcode:</label>-->
-<!--    <input type="text" id="barcodeInput" autofocus readonly placeholder="Scan a barcode here...">-->
 
-    <div id="scannedOutput">
-        <h3>Last Scanned Value:</h3>
-        <p id="lastScanValue">Waiting for scan...</p>
-    </div>
-
-    <div id="scanStatus" class="active-scan-status">Ready to scan.</div>
-
-    <p class="status-message">
-        (The input field is read-only but will still capture barcode scans. It will clear automatically.)
-    </p>
-    <div id="status"></div>
-</div>
-
-<script src="home.js"></script>
+    <script src="home.js"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
