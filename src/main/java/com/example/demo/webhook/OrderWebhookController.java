@@ -22,7 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/webhook")
 @RequiredArgsConstructor
 @Slf4j
-public class WebhookController {
+public class OrderWebhookController {
 
     private final @NonNull HandleWebhook handleWebhook;
     private final @NonNull TiktokConfiguration tiktokConfiguration;

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0006-make-seller-id-nullable
+      author: claude
+      comment: Make seller_id nullable to support OAuth flow where seller_id is populated after authorization
+      changes:
+        - modifyDataType:
+            tableName: platform_integrations
+            columnName: seller_id
+            newDataType: varchar(255)
+        - dropNotNullConstraint:
+            tableName: platform_integrations
+            columnName: seller_id

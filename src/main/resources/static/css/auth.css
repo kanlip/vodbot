@@ -1,0 +1,228 @@
+/* Authentication Pages Styling */
+
+.auth-body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    margin: 2rem 0;
+    max-width: 100%;
+    backdrop-filter: blur(10px);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+.auth-form {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: #f7fafc;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background-color: white;
+}
+
+.form-control.is-invalid {
+    border-color: #e53e3e;
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+}
+
+.invalid-feedback {
+    display: block;
+    color: #e53e3e;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-text {
+    color: #718096;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    text-transform: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    transform: none;
+    box-shadow: none;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-label {
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.auth-footer {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.auth-footer p {
+    color: #718096;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.auth-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.auth-footer a:hover {
+    color: #5a6fd8;
+    text-decoration: underline;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.alert-danger {
+    background-color: #fed7d7;
+    color: #c53030;
+}
+
+.alert-success {
+    background-color: #c6f6d5;
+    color: #2f855a;
+}
+
+.alert i {
+    margin-right: 0.5rem;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+        border-radius: 12px;
+    }
+
+    .auth-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .container {
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-body {
+        padding: 1rem 0;
+    }
+
+    .auth-card {
+        padding: 1.5rem;
+        margin: 0.5rem;
+    }
+
+    .auth-header h2 {
+        font-size: 1.4rem;
+    }
+}
+
+/* Loading Animation */
+.spinner-border {
+    border-width: 0.15em;
+}
+
+/* Focus States */
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Custom Checkbox */
+.form-check-input {
+    border-radius: 4px;
+    border: 2px solid #e2e8f0;
+}
+
+.form-check-input:focus {
+    border-color: #667eea;
+}
+
+/* Link Styling */
+a.text-primary {
+    color: #667eea !important;
+}
+
+a.text-primary:hover {
+    color: #5a6fd8 !important;
+}
+
+/* Smooth Transitions */
+* {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}

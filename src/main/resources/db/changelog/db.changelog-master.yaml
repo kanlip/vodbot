@@ -1,4 +1,21 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changesets/0001-init.yml
+      file: changesets/0001-create-organizations-table.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changesets/0002-create-users-table.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changesets/0003-create-orders-packages-tables.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changesets/0004-create-platform-tables.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changesets/0005-create-recording-tables.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changesets/0006-make-seller-id-nullable.yml
+      relativeToChangelogFile: true
+
 

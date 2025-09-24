@@ -1,0 +1,114 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0003-create-orders-packages-tables
+      author: claude
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: orders
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: seller_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform_order_id
+                  type: varchar(120)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_date
+                  type: timestamp with time zone
+              - column:
+                  name: platform
+                  type: varchar(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(40)
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: orders
+            columnNames: seller_id, platform_order_id
+            constraintName: uq_seller_platform_order
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_seller_id
+            columns:
+              - column:
+                  name: seller_id
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_platform
+            columns:
+              - column:
+                  name: platform
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_status
+            columns:
+              - column:
+                  name: status
+        - createTable:
+            tableName: packages
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: package_code
+                  type: varchar(120)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: packer_id
+                  type: uuid
+              - column:
+                  name: order_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: packages
+            baseColumnNames: order_id
+            constraintName: fk_package_order
+            referencedTableName: orders
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: packages
+            indexName: idx_packages_order_id
+            columns:
+              - column:
+                  name: order_id
+        - createIndex:
+            tableName: packages
+            indexName: idx_packages_packer_id
+            columns:
+              - column:
+                  name: packer_id

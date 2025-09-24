@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable String id, @RequestBody User user) {
+    public User updateUser(@PathVariable UUID id, @RequestBody User user) {
         user.setId(id);
         return userUseCase.updateUser(user);
     }

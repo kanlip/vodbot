@@ -1,0 +1,409 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0004-create-platform-tables
+      author: claude
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: platform_integrations
+      changes:
+        - createTable:
+            tableName: platform_integrations
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: org_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seller_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: api_credentials
+                  type: text
+              - column:
+                  name: webhook_secret
+                  type: varchar(255)
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: last_sync_at
+                  type: timestamp with time zone
+              - column:
+                  name: sync_status
+                  type: varchar(50)
+              - column:
+                  name: oauth_state
+                  type: varchar(255)
+              - column:
+                  name: auth_code
+                  type: varchar(255)
+              - column:
+                  name: access_token
+                  type: text
+              - column:
+                  name: refresh_token
+                  type: text
+              - column:
+                  name: token_expires_at
+                  type: timestamp with time zone
+              - column:
+                  name: shop_id
+                  type: varchar(255)
+              - column:
+                  name: shop_name
+                  type: varchar(255)
+              - column:
+                  name: authorization_status
+                  type: varchar(50)
+              - column:
+                  name: authorized_at
+                  type: timestamp with time zone
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: platform_integrations
+            baseColumnNames: org_id
+            constraintName: fk_platform_integrations_org
+            referencedTableName: organizations
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: platform_integrations
+            indexName: idx_platform_integrations_org_id
+            columns:
+              - column:
+                  name: org_id
+        - createIndex:
+            tableName: platform_integrations
+            indexName: idx_platform_integrations_platform
+            columns:
+              - column:
+                  name: platform
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: org_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: master_sku
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: category
+                  type: varchar(255)
+              - column:
+                  name: brand
+                  type: varchar(255)
+              - column:
+                  name: weight_grams
+                  type: integer
+              - column:
+                  name: dimensions
+                  type: jsonb
+              - column:
+                  name: attributes
+                  type: jsonb
+              - column:
+                  name: primary_image_url
+                  type: varchar(500)
+              - column:
+                  name: barcode
+                  type: varchar(20)
+              - column:
+                  name: barcode_type
+                  type: varchar(50)
+              - column:
+                  name: barcode_generated_at
+                  type: timestamp with time zone
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: products
+            baseColumnNames: org_id
+            constraintName: fk_products_org_id
+            referencedTableName: organizations
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: products
+            indexName: idx_products_org_id
+            columns:
+              - column:
+                  name: org_id
+        - createIndex:
+            tableName: products
+            indexName: idx_products_master_sku
+            columns:
+              - column:
+                  name: master_sku
+        - createIndex:
+            tableName: products
+            indexName: idx_products_barcode
+            columns:
+              - column:
+                  name: barcode
+        - createIndex:
+            tableName: products
+            indexName: idx_products_status
+            columns:
+              - column:
+                  name: status
+        - addUniqueConstraint:
+            tableName: products
+            columnNames: org_id, master_sku
+            constraintName: uk_products_org_master_sku
+        - createTable:
+            tableName: platform_products
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform_integration_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform_product_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: platform_sku
+                  type: varchar(255)
+              - column:
+                  name: platform_name
+                  type: varchar(255)
+              - column:
+                  name: platform_price
+                  type: decimal(10,2)
+              - column:
+                  name: currency
+                  type: varchar(10)
+              - column:
+                  name: stock_quantity
+                  type: integer
+              - column:
+                  name: platform_status
+                  type: varchar(50)
+              - column:
+                  name: platform_url
+                  type: varchar(500)
+              - column:
+                  name: platform_barcode
+                  type: varchar(50)
+              - column:
+                  name: platform_data
+                  type: jsonb
+              - column:
+                  name: last_synced_at
+                  type: timestamp with time zone
+              - column:
+                  name: sync_status
+                  type: varchar(50)
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: platform_products
+            baseColumnNames: product_id
+            constraintName: fk_platform_products_product
+            referencedTableName: products
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: platform_products
+            baseColumnNames: platform_integration_id
+            constraintName: fk_platform_products_integration
+            referencedTableName: platform_integrations
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: platform_products
+            indexName: idx_platform_products_product_id
+            columns:
+              - column:
+                  name: product_id
+        - createIndex:
+            tableName: platform_products
+            indexName: idx_platform_products_platform_integration_id
+            columns:
+              - column:
+                  name: platform_integration_id
+        - createIndex:
+            tableName: platform_products
+            indexName: idx_platform_products_platform_product_id
+            columns:
+              - column:
+                  name: platform_product_id
+        - createTable:
+            tableName: barcode_generation_log
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: barcode
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: barcode_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: generation_method
+                  type: varchar(50)
+              - column:
+                  name: generated_by
+                  type: uuid
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: barcode_generation_log
+            baseColumnNames: product_id
+            constraintName: fk_barcode_log_product
+            referencedTableName: products
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: barcode_generation_log
+            indexName: idx_barcode_log_product_id
+            columns:
+              - column:
+                  name: product_id
+        - createTable:
+            tableName: product_matching_rules
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: org_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rule_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: match_fields
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: similarity_threshold
+                  type: decimal(3,2)
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValue: true
+              - column:
+                  name: priority
+                  type: integer
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: product_matching_rules
+            baseColumnNames: org_id
+            constraintName: fk_product_matching_rules_org
+            referencedTableName: organizations
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: product_matching_rules
+            indexName: idx_product_matching_rules_org_id
+            columns:
+              - column:
+                  name: org_id

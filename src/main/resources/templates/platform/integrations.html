@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Integrations - Vodbot</title>
+
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.6/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- HTMX -->
+    <script th:src="@{/webjars/htmx.org/2.0.4/dist/htmx.min.js}"></script>
+
+    <!-- Custom styles -->
+    <style>
+        .platform-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .platform-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            font-size: 0.75rem;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .alert-auto-dismiss {
+            animation: fadeOut 5s ease-in-out forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-video me-2"></i>Vodbot
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/platform/integrations}">
+                            <i class="fas fa-plug me-1"></i>Platform Integrations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-box me-1"></i>Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-shopping-cart me-1"></i>Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-video me-1"></i>Recordings
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Account
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Flash Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show alert-auto-dismiss" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1><i class="fas fa-plug me-2"></i>Platform Integrations</h1>
+                <p class="text-muted">Connect your e-commerce platforms to sync products and manage orders</p>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="addIntegrationDropdown" data-bs-toggle="dropdown">
+                    <i class="fas fa-plus me-2"></i>Add Integration
+                </button>
+                <ul class="dropdown-menu">
+                    <li th:each="platform : ${platforms}">
+                        <a class="dropdown-item" th:href="@{/platform/authorize(platform=${platform}, orgId=${orgId})}">
+                            <i th:if="${platform.name() == 'SHOPEE'}" class="fab fa-shopify me-2"></i>
+                            <i th:if="${platform.name() == 'TIKTOK'}" class="fab fa-tiktok me-2"></i>
+                            <i th:if="${platform.name() == 'LAZADA'}" class="fas fa-store me-2"></i>
+                            <span th:text="${platform.name() == 'SHOPEE' ? 'Shopee' : platform.name() == 'LAZADA' ? 'Lazada' : 'TikTok Shop'}"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Existing Integrations -->
+        <div class="row" th:if="${!integrations.isEmpty()}">
+            <div class="col-md-6 col-lg-4 mb-4" th:each="integration : ${integrations}">
+                <div class="card h-100 platform-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex align-items-center">
+                                <i th:if="${integration.platform.name() == 'SHOPEE'}" class="fab fa-shopify text-warning fa-2x me-3"></i>
+                                <i th:if="${integration.platform.name() == 'TIKTOK'}" class="fab fa-tiktok text-dark fa-2x me-3"></i>
+                                <i th:if="${integration.platform.name() == 'LAZADA'}" class="fas fa-store text-primary fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="card-title mb-1" th:text="${integration.platform.name() == 'SHOPEE' ? 'Shopee' : integration.platform.name() == 'LAZADA' ? 'Lazada' : 'TikTok Shop'}"></h5>
+                                    <small class="text-muted" th:text="${integration.shopName != null ? integration.shopName : integration.sellerId}"></small>
+                                </div>
+                            </div>
+                            <span th:class="'badge status-badge ' +
+                                (${integration.authorizationStatus.name() == 'AUTHORIZED'} ? 'bg-success' :
+                                 ${integration.authorizationStatus.name() == 'PENDING'} ? 'bg-warning' :
+                                 ${integration.authorizationStatus.name() == 'EXPIRED'} ? 'bg-danger' : 'bg-secondary')"
+                                  th:text="${integration.authorizationStatus.name()}"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted">Last Sync: </small>
+                            <small th:text="${integration.lastSyncAt != null ? #temporals.format(integration.lastSyncAt, 'MMM dd, yyyy HH:mm') : 'Never'}"></small>
+                            <br>
+                            <small class="text-muted">Status: </small>
+                            <small th:text="${integration.syncStatus != null ? integration.syncStatus.name() : 'N/A'}"></small>
+                        </div>
+
+                        <div th:if="${integration.authorizationStatus.name() == 'AUTHORIZED'}" class="mb-3">
+                            <small class="text-success">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Connected and ready
+                            </small>
+                        </div>
+
+                        <div th:if="${integration.authorizationStatus.name() == 'EXPIRED'}" class="mb-3">
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                Token expired - refresh required
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-group w-100" role="group">
+                            <button th:if="${integration.authorizationStatus.name() == 'AUTHORIZED'}"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    th:attr="hx-post=@{/platform/integrations/{id}/sync(id=${integration.id})}"
+                                    hx-trigger="click"
+                                    hx-indicator=".sync-spinner"
+                                    title="Sync Products">
+                                <i class="fas fa-sync-alt me-1"></i>Sync
+                            </button>
+
+                            <button th:if="${integration.authorizationStatus.name() == 'EXPIRED'}"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-warning"
+                                    th:attr="hx-post=@{/platform/integrations/{id}/refresh(id=${integration.id})}"
+                                    hx-trigger="click"
+                                    title="Refresh Token">
+                                <i class="fas fa-refresh me-1"></i>Refresh
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    th:attr="data-integration-id=${integration.id},data-platform-name=${integration.platform.name() == 'SHOPEE' ? 'Shopee' : integration.platform.name() == 'LAZADA' ? 'Lazada' : 'TikTok Shop'}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#disconnectModal"
+                                    title="Disconnect">
+                                <i class="fas fa-unlink me-1"></i>Disconnect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${integrations.isEmpty()}" class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-plug fa-4x text-muted"></i>
+            </div>
+            <h3 class="text-muted mb-3">No Platform Integrations</h3>
+            <p class="text-muted mb-4">Connect your e-commerce platforms to start managing products and orders</p>
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <a th:each="platform : ${platforms}"
+                   th:href="@{/platform/authorize(platform=${platform}, orgId=${orgId})}"
+                   class="btn btn-outline-primary">
+                    <i th:if="${platform.name() == 'SHOPEE'}" class="fab fa-shopify me-2"></i>
+                    <i th:if="${platform.name() == 'TIKTOK'}" class="fab fa-tiktok me-2"></i>
+                    <i th:if="${platform.name() == 'LAZADA'}" class="fas fa-store me-2"></i>
+                    <span th:text="'Connect ' + (${platform.name() == 'SHOPEE' ? 'Shopee' : platform.name() == 'LAZADA' ? 'Lazada' : 'TikTok Shop'})"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Disconnect Confirmation Modal -->
+        <div class="modal fade" id="disconnectModal" tabindex="-1" aria-labelledby="disconnectModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="disconnectModalLabel">Disconnect Platform</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to disconnect from <strong id="platformName"></strong>?</p>
+                        <p class="text-muted small">This will revoke access and stop syncing products and orders. You can reconnect at any time.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form id="disconnectForm" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-unlink me-1"></i>Disconnect
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Handle disconnect modal
+            document.getElementById('disconnectModal').addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const integrationId = button.getAttribute('data-integration-id');
+                const platformName = button.getAttribute('data-platform-name');
+
+                document.getElementById('platformName').textContent = platformName;
+                document.getElementById('disconnectForm').action = `/platform/integrations/${integrationId}/revoke`;
+            });
+        </script>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Vodbot</h5>
+                    <p class="text-muted">Video recording platform for e-commerce sellers</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted">&copy; 2024 Vodbot. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.6/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Hyperscript -->
+    <script th:src="@{/webjars/hyperscript.org/0.9.13/dist/_hyperscript.min.js}"></script>
+</body>
+</html>

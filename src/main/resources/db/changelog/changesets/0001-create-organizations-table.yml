@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0001-create-organizations-table
+      author: claude
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: organizations
+      changes:
+        - createTable:
+            tableName: organizations
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: varchar(255)
+              - column:
+                  name: name
+                  type: varchar(180)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(40)
+              - column:
+                  name: plan_code
+                  type: varchar(60)
+              - column:
+                  name: plan_started_at
+                  type: timestamp with time zone
+              - column:
+                  name: plan_expires_at
+                  type: timestamp with time zone
+              - column:
+                  name: billing_contact_email
+                  type: varchar(150)
+              - column:
+                  name: billing_cycle
+                  type: varchar(40)
+              - column:
+                  name: billing_currency
+                  type: varchar(10)
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: organizations
+            indexName: idx_org_name
+            unique: true
+            columns:
+              - column:
+                  name: name

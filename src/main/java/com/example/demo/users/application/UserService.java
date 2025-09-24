@@ -6,6 +6,7 @@ import com.example.demo.users.port.out.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,7 +19,7 @@ public class UserService implements UserUseCase {
 
     @Override
     public User findById(UUID id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override

@@ -16,9 +16,9 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
 
 
     @Override
-    public Organization findById(UUID id) {
+    public Optional<Organization> findById(UUID id) {
         Optional<OrganizationsEntity> entity = springRepo.findById(id);
-        return entity.map(OrganizationMapper.INSTANCE::toDomain).orElse(null);
+        return entity.map(OrganizationMapper.INSTANCE::toDomain);
     }
 
     @Override

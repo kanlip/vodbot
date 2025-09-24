@@ -8,7 +8,12 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
 
     UserMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(UserMapper.class);
-    @Mapping(source = "entity.organizationsEntity.id", target = "orgId")
+
+    @Mapping(source = "organizationsEntity.id", target = "orgId")
     User toDomain(UsersEntity entity);
+
+    @Mapping(source = "orgId", target = "organizationsEntity.id")
+    @Mapping(target = "organizationsEntity", ignore = true)
+    @Mapping(source = "supervisor", target = "isSupervisor")
     UsersEntity toEntity(User user);
 }

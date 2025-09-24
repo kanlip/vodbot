@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - VodBot</title>
+    <link href="/webjars/bootstrap/5.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/auth.css" rel="stylesheet">
+</head>
+<body class="auth-body">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2>Create Account</h2>
+                        <p class="text-muted">Join VodBot to start recording packing videos</p>
+                    </div>
+
+                    <!-- Error Alert -->
+                    <div th:if="${error}" class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span th:text="${error}">Error message</span>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div th:if="${message}" class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle"></i>
+                        <span th:text="${message}">Success message</span>
+                    </div>
+
+                    <form id="signupForm" class="auth-form">
+                        <div class="mb-3">
+                            <label for="displayName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="displayName" name="displayName" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="organizationName" class="form-label">Organization Name</label>
+                            <input type="text" class="form-control" id="organizationName" name="organizationName"
+                                   placeholder="Optional - will use your name if empty">
+                            <div class="form-text">This will be your organization name for managing integrations</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                            <div class="form-text">Minimum 8 characters</div>
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                I agree to the <a href="#" class="text-primary">Terms of Service</a> and
+                                <a href="#" class="text-primary">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3" id="signupBtn">
+                            <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                            Create Account
+                        </button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p class="mb-0">Already have an account?
+                            <a href="/auth/login" class="text-primary">Sign in here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/webjars/bootstrap/5.3.6/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('signupBtn');
+            const spinner = btn.querySelector('.spinner-border');
+
+            // Get form values
+            const formData = {
+                displayName: document.getElementById('displayName').value,
+                email: document.getElementById('email').value,
+                organizationName: document.getElementById('organizationName').value,
+                password: document.getElementById('password').value
+            };
+
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Clear previous validation errors
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+            // Validate passwords match
+            if (formData.password !== confirmPassword) {
+                document.getElementById('confirmPassword').classList.add('is-invalid');
+                document.getElementById('confirmPassword').nextElementSibling.textContent = 'Passwords do not match';
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Creating Account...';
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token in localStorage
+                    localStorage.setItem('accessToken', data.accessToken);
+                    localStorage.setItem('refreshToken', data.refreshToken);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Redirect to dashboard or onboarding
+                    window.location.href = '/dashboard';
+                } else {
+                    // Show error
+                    if (data.errors) {
+                        // Handle validation errors
+                        Object.entries(data.errors).forEach(([field, message]) => {
+                            const input = document.getElementById(field);
+                            if (input) {
+                                input.classList.add('is-invalid');
+                                input.nextElementSibling.textContent = message;
+                            }
+                        });
+                    } else {
+                        showError(data.message || 'Signup failed');
+                    }
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                // Reset button state
+                btn.disabled = false;
+                spinner.classList.add('d-none');
+                btn.innerHTML = 'Create Account';
+            }
+        });
+
+        // Real-time password confirmation validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+
+            if (confirmPassword && password !== confirmPassword) {
+                this.classList.add('is-invalid');
+                this.nextElementSibling.textContent = 'Passwords do not match';
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+
+        function showError(message) {
+            const existingAlert = document.querySelector('.alert-danger');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger';
+            alertDiv.innerHTML = `<i class="bi bi-exclamation-triangle"></i> ${message}`;
+
+            const form = document.getElementById('signupForm');
+            form.parentNode.insertBefore(alertDiv, form);
+        }
+    </script>
+</body>
+</html>

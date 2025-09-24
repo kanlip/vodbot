@@ -1,0 +1,251 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0005-create-recording-tables
+      author: claude
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: recording_sessions
+      changes:
+        - createTable:
+            tableName: recording_sessions
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: packer_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: session_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: started_at
+                  type: timestamp with time zone
+              - column:
+                  name: ended_at
+                  type: timestamp with time zone
+              - column:
+                  name: duration_seconds
+                  type: integer
+              - column:
+                  name: metadata
+                  type: jsonb
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: recording_sessions
+            baseColumnNames: order_id
+            constraintName: fk_recording_sessions_order
+            referencedTableName: orders
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: recording_sessions
+            baseColumnNames: packer_id
+            constraintName: fk_recording_sessions_packer
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: recording_sessions
+            indexName: idx_recording_sessions_order_id
+            columns:
+              - column:
+                  name: order_id
+        - createIndex:
+            tableName: recording_sessions
+            indexName: idx_recording_sessions_packer_id
+            columns:
+              - column:
+                  name: packer_id
+        - createIndex:
+            tableName: recording_sessions
+            indexName: idx_recording_sessions_status
+            columns:
+              - column:
+                  name: status
+        - createTable:
+            tableName: video_files
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: session_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: s3_bucket
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: s3_key
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_size_bytes
+                  type: bigint
+              - column:
+                  name: content_type
+                  type: varchar(100)
+              - column:
+                  name: duration_seconds
+                  type: integer
+              - column:
+                  name: resolution
+                  type: varchar(50)
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: public_url
+                  type: varchar(500)
+              - column:
+                  name: uploaded_at
+                  type: timestamp with time zone
+              - column:
+                  name: processed_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: metadata
+                  type: jsonb
+        - addForeignKeyConstraint:
+            baseTableName: video_files
+            baseColumnNames: session_id
+            constraintName: fk_video_files_session
+            referencedTableName: recording_sessions
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: video_files
+            indexName: idx_video_files_session_id
+            columns:
+              - column:
+                  name: session_id
+        - createIndex:
+            tableName: video_files
+            indexName: idx_video_files_status
+            columns:
+              - column:
+                  name: status
+        - createTable:
+            tableName: video_shares
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: session_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: share_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recipient
+                  type: varchar(255)
+              - column:
+                  name: share_token
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: access_count
+                  type: integer
+                  constraints:
+                    nullable: false
+                  defaultValue: 0
+              - column:
+                  name: expires_at
+                  type: timestamp with time zone
+              - column:
+                  name: sent_at
+                  type: timestamp with time zone
+              - column:
+                  name: last_accessed_at
+                  type: timestamp with time zone
+              - column:
+                  name: active
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValue: true
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: video_shares
+            baseColumnNames: session_id
+            constraintName: fk_video_shares_session
+            referencedTableName: recording_sessions
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: video_shares
+            indexName: idx_video_shares_session_id
+            columns:
+              - column:
+                  name: session_id
+        - createIndex:
+            tableName: video_shares
+            indexName: idx_video_shares_share_token
+            columns:
+              - column:
+                  name: share_token

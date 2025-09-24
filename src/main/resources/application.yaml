@@ -4,9 +4,6 @@ logging:
       awspring:
         cloud: debug
 spring:
-  mvc:
-    view:
-      prefix: '/templates/'
   application:
     name: demo
   datasource:
@@ -24,6 +21,8 @@ spring:
     open-in-view: false
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+    liquibase-schema: public
   cloud:
     config:
       import-check:
@@ -50,24 +49,61 @@ springdoc:
     enable: true
   show-actuator: true
 
-lazada:
-  product:
-    url : ${LAZADA_PRODUCT_URL:https://api.lazada.co.th/rest}
-    appKey: ${LAZADA_APP_KEY:}
-    appSecret: ${LAZADA_APP_SECRET:}
-shopee:
-  product:
+platform:
+  oauth:
+    callback-url: ${PLATFORM_OAUTH_CALLBACK_URL:https://589ad4c65c91.ngrok-free.app/platform/callback}
+
+  lazada:
+    product:
+      url : ${LAZADA_PRODUCT_URL:https://api.lazada.co.th/rest}
+    oauth:
+      auth-url: ${LAZADA_AUTH_URL:https://auth.lazada.com/oauth/authorize}
+      token-url: ${LAZADA_TOKEN_URL:https://auth.lazada.com/rest/auth/token/create}
+      refresh-url: ${LAZADA_REFRESH_URL:https://auth.lazada.com/rest/auth/token/refresh}
+    app:
+      key: ${LAZADA_APP_KEY:}
+      secret: ${LAZADA_APP_SECRET:}
+
+  shopee:
+    product:
       url: ${SHOPEE_PRODUCT_URL:https://partner.shopeemobile.com/api/v2/product}
-  accessToken: ${SHOPEE_ACCESS_TOKEN:}
-  partnerId: ${SHOPEE_PARTNER_ID:}
-tiktok:
-  product:
-    url: ${TIKTOK_PRODUCT_URL:https://open-api.tiktok.com/product/v1}
-  accessToken: ${TIKTOK_ACCESS_TOKEN:}
-  appKey: ${TIKTOK_APP_KEY:}
-  appSecret: ${TIKTOK_APP_SECRET:}
-  shopCipher: ${TIKTOK_SHOP_CIPHER:}
-  openApiUrl: ${TIKTOK_OPEN_API_URL:https://open-api.tiktokglobalshop.com}
+    oauth:
+      auth-url: ${SHOPEE_AUTH_URL:https://partner.shopeemobile.com/api/v2/shop/auth_partner}
+      token-url: ${SHOPEE_TOKEN_URL:https://partner.shopeemobile.com/api/v2/auth/token/get}
+      refresh-url: ${SHOPEE_REFRESH_URL:https://partner.shopeemobile.com/api/v2/auth/access_token/get}
+    app:
+      partner-id: ${SHOPEE_PARTNER_ID:}
+      secret: ${SHOPEE_APP_SECRET:}
+    access-token: ${SHOPEE_ACCESS_TOKEN:}
+
+  tiktok:
+    product:
+      url: ${TIKTOK_PRODUCT_URL:https://open-api.tiktok.com/product/v1}
+    oauth:
+      auth-url: ${TIKTOK_AUTH_URL:https://services.tiktokshop.com/open/authorize}
+      token-url: ${TIKTOK_TOKEN_URL:https://auth.tiktok-shops.com/api/v2/token/get}
+      refresh-url: ${TIKTOK_REFRESH_URL:https://auth.tiktok-shops.com/api/v2/token/refresh}
+    app:
+      key: ${TIKTOK_APP_KEY:}
+      secret: ${TIKTOK_APP_SECRET:}
+    shop-cipher: ${TIKTOK_SHOP_CIPHER:}
+    open-api-url: ${TIKTOK_OPEN_API_URL:https://open-api.tiktokglobalshop.com}
+    access-token: ${TIKTOK_ACCESS_TOKEN:}
+
+# Vodbot Configuration
+vodbot:
+  s3:
+    bucket: ${VODBOT_S3_BUCKET:vodbot-videos}
+    region: ${VODBOT_S3_REGION:us-east-1}
+    video-prefix: ${VODBOT_S3_VIDEO_PREFIX:videos/}
+  recording:
+    max-session-duration: ${VODBOT_MAX_SESSION_DURATION:PT4H}
+    max-video-size: ${VODBOT_MAX_VIDEO_SIZE:5368709120}
+    supported-formats:
+      - video/mp4
+      - video/webm
+      - video/quicktime
+      - video/x-msvideo
 feign:
   compression:
     request:

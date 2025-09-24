@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VodBot</title>
+    <link href="/webjars/bootstrap/5.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: 700;
+            color: #667eea !important;
+        }
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .platform-card {
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .platform-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1);
+        }
+        .btn-platform {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+        }
+        .btn-platform:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">VodBot</a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3" id="userInfo">Loading...</span>
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="welcome-card">
+            <h1 class="mb-3">Welcome to VodBot!</h1>
+            <p class="mb-0">Connect your e-commerce platforms and start recording packing videos for your orders.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h3 class="mb-4">Platform Integrations</h3>
+
+                <div class="platform-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-2">🛒 Lazada</h5>
+                            <p class="text-muted mb-0">Connect your Lazada seller account</p>
+                        </div>
+                        <button class="btn btn-platform" onclick="connectPlatform('LAZADA')">Connect</button>
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-2">🛍️ Shopee</h5>
+                            <p class="text-muted mb-0">Connect your Shopee seller account</p>
+                        </div>
+                        <button class="btn btn-platform" onclick="connectPlatform('SHOPEE')">Connect</button>
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-2">📱 TikTok Shop</h5>
+                            <p class="text-muted mb-0">Connect your TikTok Shop seller account</p>
+                        </div>
+                        <button class="btn btn-platform" onclick="connectPlatform('TIKTOK')">Connect</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Quick Stats</h5>
+                        <div class="row text-center">
+                            <div class="col-12 mb-3">
+                                <div class="h4 text-primary">0</div>
+                                <small class="text-muted">Connected Platforms</small>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <div class="h4 text-success">0</div>
+                                <small class="text-muted">Orders Synced</small>
+                            </div>
+                            <div class="col-12">
+                                <div class="h4 text-info">0</div>
+                                <small class="text-muted">Videos Recorded</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/webjars/bootstrap/5.3.6/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check authentication and load user info
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('accessToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (!token) {
+                window.location.href = '/auth/login';
+                return;
+            }
+
+            // Verify token is still valid by making a test API call
+            try {
+                const response = await fetch('/api/v1/platform/auth/integrations', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    // Token is invalid, redirect to login
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    localStorage.removeItem('user');
+                    window.location.href = '/auth/login?message=Session expired, please log in again';
+                    return;
+                }
+
+                // Token is valid, display user info
+                document.getElementById('userInfo').textContent =
+                    `${user.displayName || user.email} (${user.orgName || 'Organization'})`;
+
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                // On network error, still show the page but user will get errors when trying to connect platforms
+                document.getElementById('userInfo').textContent =
+                    `${user.displayName || user.email} (${user.orgName || 'Organization'})`;
+            }
+        });
+
+        async function connectPlatform(platform) {
+            const token = localStorage.getItem('accessToken');
+
+            if (!token) {
+                window.location.href = '/auth/login';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v1/platform/auth/initiate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        platform: platform,
+<!--                        redirectUrl: window.location.origin + '/platform/callback',-->
+                        redirectUrl: 'https://589ad4c65c91.ngrok-free.app' + '/platform/callback',
+                        webhookSecret: 'webhook_secret_' + Math.random().toString(36).substr(2, 9)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Redirect to platform OAuth
+                    window.location.href = data.authUrl;
+                } else {
+                    alert('Failed to initiate OAuth: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Network error: ' + error.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/auth/login';
+        }
+    </script>
+</body>
+</html>

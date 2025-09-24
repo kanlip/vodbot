@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw liquibase:update:*)",
+      "Bash(./mvnw liquibase:status:*)",
+      "Bash(./mvnw liquibase:clearCheckSums:*)",
+      "Bash(./mvnw:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(docker compose:*)",
+      "Bash(/bashes)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

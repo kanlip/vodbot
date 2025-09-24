@@ -1,0 +1,390 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.4.7:run (default-cli) > test-compile @ demo >>>
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java) @ demo ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ demo ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 7 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ demo ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 169 source files with javac [debug parameters release 21] to target\classes
+[WARNING] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/order/adapter/out/persistence/OrderEntity.java:[49,33] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/order/adapter/out/persistence/OrderMapper.java:[12,11] Unmapped target property: "packageIds".
+[WARNING] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/order/adapter/out/persistence/OrderMapper.java:[13,17] Unmapped target property: "packages".
+[WARNING] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/users/adapter/out/persistence/OrganizationMapper.java:[16,25] Unmapped target properties: "tenantId, usersEntities".
+[WARNING] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/users/adapter/out/persistence/UserMapper.java:[12,10] Unmapped target property: "supervisor".
+[WARNING] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/users/adapter/out/persistence/UserMapper.java:[13,17] Unmapped target properties: "isSupervisor, organizationsEntity".
+[WARNING] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/recording/adapter/out/persistence/RecordingSessionMapper.java:[9,22] Unmapped target properties: "videoFiles, qualityMetrics, stepCompletions".
+[INFO] Hibernate compile-time tooling 6.6.18.Final
+[INFO] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/platform/domain/ProductMatcher.java: C:\Users\kanl1\Desktop\Proj\vodbot\src\main\java\com\example\demo\platform\domain\ProductMatcher.java uses or overrides a deprecated API.
+[INFO] /C:/Users/kanl1/Desktop/Proj/vodbot/src/main/java/com/example/demo/platform/domain/ProductMatcher.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ demo ---
+[INFO] skip non existing resourceDirectory C:\Users\kanl1\Desktop\Proj\vodbot\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ demo ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 3 source files with javac [debug parameters release 21] to target\test-classes
+[INFO] Hibernate compile-time tooling 6.6.18.Final
+[INFO] 
+[INFO] <<< spring-boot:3.4.7:run (default-cli) < test-compile @ demo <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.4.7:run (default-cli) @ demo ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.7)
+
+2025-09-18T21:39:55.779+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] com.example.demo.Application             : Starting Application using Java 21.0.7 with PID 32296 (C:\Users\kanl1\Desktop\Proj\vodbot\target\classes started by kanl1 in C:\Users\kanl1\Desktop\Proj\vodbot)
+2025-09-18T21:39:55.781+07:00 DEBUG 32296 --- [demo] [  restartedMain] [                                                 ] com.example.demo.Application             : Running with Spring Boot v3.4.7, Spring v6.2.8
+2025-09-18T21:39:55.782+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] com.example.demo.Application             : The following 1 profile is active: "local"
+2025-09-18T21:39:55.817+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-18T21:39:55.817+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-18T21:39:55.827+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] .s.b.d.c.l.DockerComposeLifecycleManager : Using Docker Compose file C:\Users\kanl1\Desktop\Proj\vodbot\compose.yaml
+2025-09-18T21:39:56.557+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] .s.b.d.c.l.DockerComposeLifecycleManager : There are already Docker Compose services running, skipping startup
+2025-09-18T21:39:57.082+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-18T21:39:57.154+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 62 ms. Found 9 JPA repository interfaces.
+2025-09-18T21:39:57.590+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.s.cloud.context.scope.GenericScope     : BeanFactory id=a2598e00-d11c-3cd2-9e3d-1002b617520c
+2025-09-18T21:39:57.714+07:00  INFO 32296 --- [demo] [cTaskExecutor-1] [                                                 ] com.tngtech.archunit.core.PluginLoader   : Detected Java version 21.0.7
+2025-09-18T21:39:59.424+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-18T21:39:59.433+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-18T21:39:59.433+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-09-18T21:39:59.476+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-09-18T21:39:59.477+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2913 ms
+2025-09-18T21:39:59.716+07:00 DEBUG 32296 --- [demo] [  restartedMain] [                                                 ] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2025-09-18T21:39:59.716+07:00 DEBUG 32296 --- [demo] [  restartedMain] [                                                 ] o.s.w.s.r.ResourceUrlEncodingFilter      : Filter 'resourceUrlEncodingFilter' configured for use
+2025-09-18T21:39:59.997+07:00 DEBUG 32296 --- [demo] [  restartedMain] [                                                 ] .c.i.h.l.ClasspathSdkHttpServiceProvider : The HTTP implementation loaded is software.amazon.awssdk.http.apache.ApacheSdkHttpService@33a21562
+2025-09-18T21:40:00.201+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-18T21:40:00.256+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-09-18T21:40:00.285+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-18T21:40:00.504+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-18T21:40:00.538+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-09-18T21:40:00.626+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@788a50c2
+2025-09-18T21:40:00.627+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-09-18T21:40:00.651+07:00  WARN 32296 --- [demo] [  restartedMain] [                                                 ] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-18T21:40:00.667+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 16.10
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-18T21:40:01.521+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    set client_min_messages = WARNING
+Hibernate: 
+    alter table if exists packages 
+       drop constraint if exists fk_package_order
+Hibernate: 
+    alter table if exists user_roles 
+       drop constraint if exists FKhfh9dx7w3ubf1co1vdev94g3f
+Hibernate: 
+    alter table if exists users 
+       drop constraint if exists FKjd9dcf126kkt9vykh5awu42yl
+Hibernate: 
+    drop table if exists barcode_generation_log cascade
+Hibernate: 
+    drop table if exists event_publication cascade
+Hibernate: 
+    drop table if exists orders cascade
+Hibernate: 
+    drop table if exists organizations cascade
+Hibernate: 
+    drop table if exists packages cascade
+Hibernate: 
+    drop table if exists platform_integrations cascade
+Hibernate: 
+    drop table if exists platform_products cascade
+Hibernate: 
+    drop table if exists product_matching_rules cascade
+Hibernate: 
+    drop table if exists products cascade
+Hibernate: 
+    drop table if exists recording_sessions cascade
+Hibernate: 
+    drop table if exists user_roles cascade
+Hibernate: 
+    drop table if exists users cascade
+Hibernate: 
+    create table barcode_generation_log (
+        created_at timestamp(6) with time zone not null,
+        generated_by uuid,
+        id uuid not null,
+        product_id uuid not null,
+        barcode varchar(255) not null,
+        barcode_type varchar(255) not null check (barcode_type in ('CODE128','CODE39','EAN13','EAN8','UPC_A','UPC_E')),
+        generation_method varchar(255) check (generation_method in ('AUTO_GENERATED','MANUAL','PLATFORM_PROVIDED')),
+        primary key (id)
+    )
+Hibernate: 
+    create table event_publication (
+        completion_date timestamp(6) with time zone,
+        publication_date timestamp(6) with time zone,
+        id uuid not null,
+        event_type varchar(255),
+        listener_id varchar(255),
+        serialized_event varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    create table orders (
+        created_at timestamp(6) with time zone not null,
+        order_date timestamp(6) with time zone,
+        updated_at timestamp(6) with time zone not null,
+        id uuid not null,
+        platform varchar(40) not null check (platform in ('LAZADA','SHOPEE','TIKTOK')),
+        status varchar(40),
+        seller_id varchar(100) not null,
+        platform_order_id varchar(120) not null,
+        primary key (id),
+        constraint uq_seller_platform_order unique (seller_id, platform_order_id)
+    )
+Hibernate: 
+    create table organizations (
+        created_at timestamp(6) with time zone not null,
+        plan_expires_at timestamp(6) with time zone,
+        plan_started_at timestamp(6) with time zone,
+        updated_at timestamp(6) with time zone not null,
+        billing_currency varchar(10),
+        id uuid not null,
+        billing_cycle varchar(40),
+        status varchar(40),
+        plan_code varchar(60),
+        billing_contact_email varchar(150),
+        name varchar(180) not null,
+        tenant_id varchar(255) not null,
+        primary key (id),
+        constraint idx_org_name unique (name)
+    )
+Hibernate: 
+    create table packages (
+        id uuid not null,
+        order_id uuid not null,
+        packer_id uuid,
+        package_code varchar(120) not null unique,
+        primary key (id)
+    )
+Hibernate: 
+    create table platform_integrations (
+        is_active boolean,
+        authorized_at timestamp(6) with time zone,
+        created_at timestamp(6) with time zone not null,
+        last_sync_at timestamp(6) with time zone,
+        token_expires_at timestamp(6) with time zone,
+        updated_at timestamp(6) with time zone not null,
+        id uuid not null,
+        org_id uuid not null,
+        access_token TEXT,
+        api_credentials TEXT,
+        auth_code varchar(255),
+        authorization_status varchar(255) check (authorization_status in ('PENDING','AUTHORIZED','EXPIRED','REVOKED')),
+        oauth_state varchar(255),
+        platform varchar(255) not null check (platform in ('LAZADA','SHOPEE','TIKTOK')),
+        refresh_token TEXT,
+        seller_id varchar(255) not null,
+        shop_id varchar(255),
+        shop_name varchar(255),
+        sync_status varchar(255) check (sync_status in ('NEVER_SYNCED','SYNCING','SUCCESS','FAILED','PARTIAL_SUCCESS')),
+        webhook_secret varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    create table platform_products (
+        platform_price numeric(10,2),
+        stock_quantity integer,
+        created_at timestamp(6) with time zone not null,
+        last_synced_at timestamp(6) with time zone,
+        updated_at timestamp(6) with time zone not null,
+        id uuid not null,
+        platform_integration_id uuid not null,
+        product_id uuid not null,
+        currency varchar(255),
+        platform_barcode varchar(255),
+        platform_name varchar(255),
+        platform_product_id varchar(255) not null,
+        platform_sku varchar(255),
+        platform_status varchar(255),
+        platform_url varchar(255),
+        sync_status varchar(255) check (sync_status in ('SUCCESS','FAILED','PENDING')),
+        platform_data jsonb,
+        primary key (id)
+    )
+Hibernate: 
+    create table product_matching_rules (
+        is_active boolean,
+        priority integer,
+        similarity_threshold numeric(3,2),
+        created_at timestamp(6) with time zone not null,
+        id uuid not null,
+        org_id uuid not null,
+        rule_name varchar(255) not null,
+        match_fields jsonb not null,
+        primary key (id)
+    )
+Hibernate: 
+    create table products (
+        weight_grams integer,
+        barcode_generated_at timestamp(6) with time zone,
+        created_at timestamp(6) with time zone not null,
+        updated_at timestamp(6) with time zone not null,
+        id uuid not null,
+        org_id uuid not null,
+        barcode varchar(20),
+        barcode_type varchar(255) check (barcode_type in ('CODE128','CODE39','EAN13','EAN8','UPC_A','UPC_E')),
+        brand varchar(255),
+        category varchar(255),
+        description TEXT,
+        master_sku varchar(255) not null,
+        primary_image_url varchar(255),
+        product_name varchar(255) not null,
+        status varchar(255) not null check (status in ('ACTIVE','INACTIVE','DISCONTINUED')),
+        attributes jsonb,
+        dimensions jsonb,
+        primary key (id)
+    )
+Hibernate: 
+    create table recording_sessions (
+        duration_seconds integer,
+        created_at timestamp(6) with time zone not null,
+        ended_at timestamp(6) with time zone,
+        started_at timestamp(6) with time zone,
+        updated_at timestamp(6) with time zone not null,
+        id uuid not null,
+        order_id uuid not null,
+        packer_id uuid not null,
+        session_type varchar(255) not null check (session_type in ('PACKING','QUALITY_CHECK','CUSTOM')),
+        status varchar(255) not null check (status in ('STARTED','RECORDING','PAUSED','PROCESSING','COMPLETED','FAILED')),
+        metadata jsonb,
+        primary key (id)
+    )
+Hibernate: 
+    create table user_roles (
+        user_id uuid not null,
+        role varchar(60)
+    )
+Hibernate: 
+    create table users (
+        is_supervisor boolean,
+        created_at timestamp(6) with time zone not null,
+        last_login_at timestamp(6) with time zone,
+        updated_at timestamp(6) with time zone not null,
+        id uuid not null,
+        organizations_id uuid not null,
+        status varchar(40),
+        display_name varchar(150),
+        email varchar(150) not null,
+        password_hash varchar(200),
+        supervisor_pin_hash varchar(200),
+        primary key (id),
+        constraint idx_users_email unique (email)
+    )
+Hibernate: 
+    alter table if exists packages 
+       add constraint fk_package_order 
+       foreign key (order_id) 
+       references orders
+Hibernate: 
+    alter table if exists user_roles 
+       add constraint FKhfh9dx7w3ubf1co1vdev94g3f 
+       foreign key (user_id) 
+       references users
+Hibernate: 
+    alter table if exists users 
+       add constraint FKjd9dcf126kkt9vykh5awu42yl 
+       foreign key (organizations_id) 
+       references organizations
+2025-09-18T21:40:01.675+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-18T21:40:01.957+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-18T21:40:02.485+07:00  WARN 32296 --- [demo] [  restartedMain] [                                                 ] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 's3EventController' defined in file [C:\Users\kanl1\Desktop\Proj\vodbot\target\classes\com\example\demo\recording\adapter\in\S3EventController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'videoUploadApplicationService' defined in file [C:\Users\kanl1\Desktop\Proj\vodbot\target\classes\com\example\demo\recording\application\VideoUploadApplicationService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 's3VideoUploadService' defined in file [C:\Users\kanl1\Desktop\Proj\vodbot\target\classes\com\example\demo\recording\adapter\out\S3VideoUploadService.class]: Unsatisfied dependency expressed through constructor parameter 2: No qualifying bean of type 'com.example.demo.recording.port.out.VideoFileRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-09-18T21:40:02.527+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+Hibernate: 
+    set client_min_messages = WARNING
+Hibernate: 
+    alter table if exists packages 
+       drop constraint if exists fk_package_order
+Hibernate: 
+    alter table if exists user_roles 
+       drop constraint if exists FKhfh9dx7w3ubf1co1vdev94g3f
+Hibernate: 
+    alter table if exists users 
+       drop constraint if exists FKjd9dcf126kkt9vykh5awu42yl
+Hibernate: 
+    drop table if exists barcode_generation_log cascade
+Hibernate: 
+    drop table if exists event_publication cascade
+Hibernate: 
+    drop table if exists orders cascade
+Hibernate: 
+    drop table if exists organizations cascade
+Hibernate: 
+    drop table if exists packages cascade
+Hibernate: 
+    drop table if exists platform_integrations cascade
+Hibernate: 
+    drop table if exists platform_products cascade
+Hibernate: 
+    drop table if exists product_matching_rules cascade
+Hibernate: 
+    drop table if exists products cascade
+Hibernate: 
+    drop table if exists recording_sessions cascade
+Hibernate: 
+    drop table if exists user_roles cascade
+Hibernate: 
+    drop table if exists users cascade
+2025-09-18T21:40:02.569+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-09-18T21:40:02.568+07:00 DEBUG 32296 --- [demo] [nnection-reaper] [                                                 ] s.a.a.h.a.i.conn.IdleConnectionReaper    : Reaper thread: 
+
+java.lang.InterruptedException: sleep interrupted
+	at java.base/java.lang.Thread.sleep0(Native Method) ~[na:na]
+	at java.base/java.lang.Thread.sleep(Thread.java:509) ~[na:na]
+	at software.amazon.awssdk.http.apache.internal.conn.IdleConnectionReaper$ReaperTask.run(IdleConnectionReaper.java:151) ~[apache-client-2.29.52.jar:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2025-09-18T21:40:02.570+07:00 DEBUG 32296 --- [demo] [nnection-reaper] [                                                 ] s.a.a.h.a.i.conn.IdleConnectionReaper    : Shutting down reaper thread.
+2025-09-18T21:40:02.571+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-09-18T21:40:03.577+07:00  WARN 32296 --- [demo] [  restartedMain] [                                                 ] z.r.i.AsyncReporter$BoundedAsyncReporter : Timed out waiting for in-flight spans to send
+2025-09-18T21:40:03.580+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-09-18T21:40:03.589+07:00  INFO 32296 --- [demo] [  restartedMain] [                                                 ] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-09-18T21:40:03.622+07:00 ERROR 32296 --- [demo] [  restartedMain] [                                                 ] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 2 of constructor in com.example.demo.recording.adapter.out.S3VideoUploadService required a bean of type 'com.example.demo.recording.port.out.VideoFileRepository' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.demo.recording.port.out.VideoFileRepository' in your configuration.
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  17.908 s
+[INFO] Finished at: 2025-09-18T21:40:03+07:00
+[INFO] ------------------------------------------------------------------------

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Connect ' + ${platformName} + ' - Vodbot'">Connect Platform - Vodbot</title>
+
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.6/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Custom styles -->
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .alert-auto-dismiss {
+            animation: fadeOut 5s ease-in-out forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-video me-2"></i>Vodbot
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/platform/integrations}">
+                            <i class="fas fa-plug me-1"></i>Platform Integrations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-box me-1"></i>Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-shopping-cart me-1"></i>Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-video me-1"></i>Recordings
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Account
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Flash Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show alert-auto-dismiss" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <i th:class="${platformIcon} + ' fa-3x text-primary mb-3'"></i>
+                            <h2 th:text="'Connect to ' + ${platformName}">Connect to Platform</h2>
+                            <p class="text-muted" th:text="${platformDescription}">Platform description</p>
+                        </div>
+
+                        <form th:action="@{/platform/authorize}" method="post" class="needs-validation" novalidate>
+                            <input type="hidden" name="platform" th:value="${platform}">
+                            <input type="hidden" name="orgId" th:value="${orgId}">
+
+                            <div class="mb-4">
+                                <label for="sellerId" class="form-label">
+                                    <span th:text="${platform.name() == 'SHOPEE' ? 'Partner ID' : platform.name() == 'LAZADA' ? 'Seller ID' : 'Shop ID'}">Seller ID</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="sellerId"
+                                       name="sellerId"
+                                       required
+                                       th:placeholder="${platform.name() == 'SHOPEE' ? 'Enter your Shopee Partner ID' : platform.name() == 'LAZADA' ? 'Enter your Lazada Seller ID' : 'Enter your TikTok Shop ID'}">
+                                <div class="invalid-feedback">
+                                    Please provide a valid ID.
+                                </div>
+                                <div class="form-text" th:text="${platform.name() == 'SHOPEE' ? 'You can find your Partner ID in the Shopee Partner Portal' : platform.name() == 'LAZADA' ? 'You can find your Seller ID in Lazada Seller Center' : 'You can find your Shop ID in TikTok Shop Seller Center'}">
+                                    Helper text for finding the ID
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="webhookSecret" class="form-label">
+                                    Webhook Secret
+                                    <span class="text-muted">(Optional)</span>
+                                </label>
+                                <input type="password"
+                                       class="form-control"
+                                       id="webhookSecret"
+                                       name="webhookSecret"
+                                       placeholder="Enter webhook secret (optional)">
+                                <div class="form-text">
+                                    This will be used to verify webhook authenticity. Leave empty to use a default secret.
+                                </div>
+                            </div>
+
+                            <!-- Platform-specific information -->
+                            <div th:if="${platform.name() == 'SHOPEE'}" class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>Shopee Authorization</h6>
+                                <ul class="mb-0 small">
+                                    <li>You will be redirected to Shopee Partner Portal</li>
+                                    <li>Log in with your seller account</li>
+                                    <li>Grant permissions to access your shop data</li>
+                                    <li>You'll be redirected back to complete the setup</li>
+                                </ul>
+                            </div>
+
+                            <div th:if="${platform.name() == 'LAZADA'}" class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>Lazada Authorization</h6>
+                                <ul class="mb-0 small">
+                                    <li>You will be redirected to Lazada authorization page</li>
+                                    <li>Log in with your seller account</li>
+                                    <li>Approve access to your store data</li>
+                                    <li>You'll be redirected back to complete the setup</li>
+                                </ul>
+                            </div>
+
+                            <div th:if="${platform.name() == 'TIKTOK'}" class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>TikTok Shop Authorization</h6>
+                                <ul class="mb-0 small">
+                                    <li>You will be redirected to TikTok Shop authorization page</li>
+                                    <li>Log in with your seller account</li>
+                                    <li>Grant permissions to access your shop data</li>
+                                    <li>You'll be redirected back to complete the setup</li>
+                                </ul>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-link me-2"></i>
+                                    <span th:text="'Connect to ' + ${platformName}">Connect to Platform</span>
+                                </button>
+                                <a th:href="@{/platform/integrations(orgId=${orgId})}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Integrations
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="mt-4">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h6 class="card-title text-warning">
+                                <i class="fas fa-shield-alt me-2"></i>Security & Privacy
+                            </h6>
+                            <p class="card-text small text-muted mb-0">
+                                Your credentials are encrypted and stored securely. We only access the minimum required permissions
+                                to sync products and orders. You can revoke access at any time from the integrations page.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Bootstrap form validation
+            (function() {
+                'use strict';
+                window.addEventListener('load', function() {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    var validation = Array.prototype.filter.call(forms, function(form) {
+                        form.addEventListener('submit', function(event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        </script>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Vodbot</h5>
+                    <p class="text-muted">Video recording platform for e-commerce sellers</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted">&copy; 2024 Vodbot. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.6/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

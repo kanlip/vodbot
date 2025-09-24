@@ -1,37 +1,36 @@
 package com.example.demo.users.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Date;
+import java.time.Instant;
+import java.util.UUID;
 
-@Setter
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Organization {
-    // getters and setters
-    private String id;
+    private UUID id;
     private String name;
     private String status;
     private Plan plan;
     private Billing billing;
-    private Date createdAt;
-    private Date updatedAt;
-    @Setter
-    @Getter
-    public static class Plan {
-        // getters and setters
-        private String code;
-        private Date startedAt;
-        private Date expiresAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
+    public enum Plan {
+        FREE, BASIC, PREMIUM, ENTERPRISE
     }
-    @Setter
+
     @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class Billing {
-        // getters and setters
         private String contactEmail;
         private String billingCycle;
         private String currency;
     }
-
 }

@@ -1,32 +1,28 @@
 package com.example.demo.users.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
-    // Getters and setters
-    private String id;
-    private String orgId;
+    private UUID id;
+    private UUID orgId;
     private String email;
     private String passwordHash;
     private List<String> roles;
     private String displayName;
     private boolean isSupervisor;
     private String supervisorPinHash;
-    private Date lastLoginAt;
+    private Instant lastLoginAt;
     private String status;
-    private Date createdAt;
-    private Date updatedAt;
-
-
+    private Instant createdAt;
+    private Instant updatedAt;
 }
 
